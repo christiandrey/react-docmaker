@@ -1,10 +1,15 @@
 import * as React from 'react'
-import styles from './styles.module.css'
+import classnames from 'classnames'
+import 'tailwindcss/tailwind.css'
 
 interface Props {
-  text: string
+  className?: string
 }
 
-export const ExampleComponent = ({ text }: Props) => {
-  return <div className={styles.test}>Example Component: {text}</div>
+export const DocmakerEditor = ({ className }: Props) => {
+  return (
+    <div className={classnames('font-sans bg-blue-500', className)}>
+      Example Component goes here
+    </div>
+  )
 }
