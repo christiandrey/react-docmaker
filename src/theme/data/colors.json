@@ -1,0 +1,36 @@
+{
+  "current": "currentColor",
+  "inherit": "inherit",
+  "transparent": "transparent",
+  "black": "#000000",
+  "white": "#ffffff",
+
+  "gray": {
+    "100": "#F9F9F9",
+    "200": "#F7F9FC",
+    "300": "#E6E6E6",
+    "400": "#D2D2D2",
+    "500": "#707D8A",
+    "600": "#6F6F6F",
+    "700": "#070707"
+  },
+
+  "green": {
+    "highlight": "#EAF8EB",
+    "500": "#1FA32A"
+  },
+
+  "blue": {
+    "highlight": "#D8E4FA",
+    "50": "#F5F8FE",
+    "100": "#EBF1FE",
+    "200": "#CCDBFC",
+    "300": "#ADC5FA",
+    "400": "#709AF7",
+    "500": "#326FF3",
+    "600": "#2D64DB",
+    "700": "#2653B6",
+    "800": "#1E4392",
+    "900": "#193677"
+  }
+}
