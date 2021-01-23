@@ -17,4 +17,6 @@ declare module '*.svg' {
   export { svgComponent as ReactComponent }
 }
 
+type Fn<T = any> = (...args: any[]) => T
+
 type ValidDate = Date | string | number
