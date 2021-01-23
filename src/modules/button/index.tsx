@@ -1,10 +1,21 @@
 import React, { FC, memo, PropsWithChildren } from 'react'
+import classnames from 'classnames'
 
-type ButtonProps = PropsWithChildren<{}>
+type ButtonProps = PropsWithChildren<{
+  disabled?: boolean
+}>
 
-const BaseButton: FC<ButtonProps> = ({ children }) => {
+const BaseButton: FC<ButtonProps> = ({ children, disabled }) => {
   return (
-    <button className='border-transparent bg-blue-500 rounded-default font-medium cursor-pointer text-white px-18 py-12 transition-colors duration-250 hover:bg-blue-600'>
+    <button
+      className={classnames(
+        'border-transparent rounded-default font-medium cursor-pointer text-white px-18 py-12 transition-colors duration-250 hover:bg-blue-600',
+        {
+          'bg-blue-500': !disabled,
+          'pointer-events-none bg-blue-300': disabled
+        }
+      )}
+    >
       {children}
     </button>
   )
