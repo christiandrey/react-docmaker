@@ -1,5 +1,6 @@
 import React, { FC, PropsWithChildren } from 'react'
 import ImageElement, { ImageElementType } from '../elements/image'
+import { composeWithClassName } from '../../core/tools'
 
 export type ElementType =
   | 'quote'
@@ -44,11 +45,23 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'bulleted-list':
       return <ul {...attributes}>{children}</ul>
     case 'heading-one':
-      return <h1 {...attributes}>{children}</h1>
+      return (
+        <h1 {...composeWithClassName(attributes, 'text-heading-2')}>
+          {children}
+        </h1>
+      )
     case 'heading-two':
-      return <h2 {...attributes}>{children}</h2>
+      return (
+        <h2 {...composeWithClassName(attributes, 'text-heading-3')}>
+          {children}
+        </h2>
+      )
     case 'heading-three':
-      return <h3 {...attributes}>{children}</h3>
+      return (
+        <h3 {...composeWithClassName(attributes, 'text-headline')}>
+          {children}
+        </h3>
+      )
     case 'heading-four':
       return <h4 {...attributes}>{children}</h4>
     case 'heading-five':

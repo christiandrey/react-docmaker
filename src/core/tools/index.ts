@@ -1,5 +1,6 @@
 import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
+import classnames from 'classnames'
 
 export type LeafFormatType =
   | 'bold'
@@ -115,4 +116,11 @@ export function setBlockInactive(editor: SlateEditorType) {
 
 export function focusEditor(editor: SlateEditorType) {
   ReactEditor.focus(editor)
+}
+
+export function composeWithClassName(attributes: any, className?: string) {
+  return {
+    ...attributes,
+    className: classnames(attributes?.className, className)
+  }
 }
