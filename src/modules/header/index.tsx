@@ -22,7 +22,6 @@ const Header: FC<HeaderProps> = ({
   const state = useRef(title)
 
   const handleBlur = () => {
-    console.log('s', state.current)
     onChangeTitle?.(state.current)
   }
 

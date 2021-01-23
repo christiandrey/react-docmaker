@@ -8,22 +8,35 @@ import { withHistory } from 'slate-history'
 import { Editable, Slate, withReact } from 'slate-react'
 import { createEditor, Node } from 'slate'
 import { stripHTMLEntities } from './core/utils'
+import { withHTML } from './core/plugins/paste-html'
+import TemplateElement from './modules/template-element'
+import TemplateLeaf from './modules/template-leaf'
 
 interface Props {
   className?: string
 }
 
 export const DocmakerEditor = ({ className }: Props) => {
-  const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+  const editor = useMemo(
+    () => withHTML(withReact(withHistory(createEditor()))),
+    []
+  )
   const createdAt = useRef(new Date().toISOString()).current
 
   const [title, setTitle] = useState('')
   const [editorState, setEditorState] = useState<Array<Node>>([
     {
       type: 'paragraph',
-      children: [{ text: 'A line of text' }]
+      children: [{ text: '' }]
     }
   ])
+
+  const renderElement = useCallback(
+    (props) => <TemplateElement {...props} />,
+    []
+  )
+
+  const renderLeaf = useCallback((props) => <TemplateLeaf {...props} />, [])
 
   const handlePressSave = useCallback(() => {
     console.log({
@@ -46,7 +59,11 @@ export const DocmakerEditor = ({ className }: Props) => {
           <Toolbar />
         </div>
         <TemplateEditor>
-          <Editable placeholder='Start typing...' />
+          <Editable
+            placeholder='Start typing...'
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+          />
         </TemplateEditor>
       </Slate>
     </div>
