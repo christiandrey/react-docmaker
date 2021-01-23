@@ -23,10 +23,13 @@ import Icon from '../icon'
 import IconGroup from '../icon-group'
 import { usePopupUtils } from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
+import ColorPopup from '../popups/color'
 
 const Toolbar: FC = () => {
   const textSizePopupAnchorRef = useRef(null)
+  const colorPopupAnchorRef = useRef(null)
   const textSizePopup = usePopupUtils()
+  const colorPopup = usePopupUtils()
 
   return (
     <Fragment>
@@ -44,7 +47,11 @@ const Toolbar: FC = () => {
               Heading 3
             </span>
           </div>
-          <div className='s-28 cursor-pointer border-2 border-solid border-white mx-16 bg-blue-500 rounded-full shadow-2' />
+          <div
+            ref={colorPopupAnchorRef}
+            className='s-28 cursor-pointer border-2 border-solid border-white mx-16 bg-blue-500 rounded-full shadow-2'
+            onClick={colorPopup.open}
+          />
         </div>
         <IconGroup>
           <IconButton>
@@ -119,6 +126,11 @@ const Toolbar: FC = () => {
         anchorRef={textSizePopupAnchorRef}
         isVisible={textSizePopup.visible}
         onRequestClose={textSizePopup.close}
+      />
+      <ColorPopup
+        anchorRef={colorPopupAnchorRef}
+        isVisible={colorPopup.visible}
+        onRequestClose={colorPopup.close}
       />
     </Fragment>
   )
