@@ -1,0 +1,13 @@
+.container {
+  position: fixed;
+  opacity: 1;
+  top: 0;
+  left: 0;
+}
+
+.arrow::after {
+  content: '';
+  position: absolute;
+  border-width: 5px;
+  border-style: solid;
+}

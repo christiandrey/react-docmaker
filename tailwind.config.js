@@ -23,6 +23,10 @@ boxShadow[2] = `${boxShadow[1]}, 0 2px 8px rgba(7, 11, 15, 0.1)`
 boxShadow[3] = `${boxShadow[2]}, 0 4px 16px rgba(7, 11, 15, 0.125)`
 boxShadow[4] = `${boxShadow[3]}, 0 8px 32px rgba(7, 11, 15, 0.1375)`
 boxShadow[5] = `${boxShadow[4]}, 0 16px 64px rgba(7, 11, 15, 0.25)`
+boxShadow[6] = `0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.028), 0 12.5px 10px rgba(0, 0, 0, 0.035),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.042), 0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+    0 100px 80px rgba(0, 0, 0, 0.07)`
 
 const fontFamily = {
   sans: [
