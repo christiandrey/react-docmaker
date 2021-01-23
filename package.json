@@ -67,6 +67,8 @@
   ],
   "dependencies": {
     "classnames": "2.2.6",
-    "react-contenteditable": "3.3.5"
+    "date-fns": "2.16.1",
+    "react-contenteditable": "3.3.5",
+    "react-icons": "4.1.0"
   }
 }
