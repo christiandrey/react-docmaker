@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import classnames from 'classnames'
 import 'tailwindcss/tailwind.css'
 import Header from './modules/header'
@@ -7,6 +7,7 @@ import TemplateEditor from './modules/template-editor'
 import { withHistory } from 'slate-history'
 import { Editable, Slate, withReact } from 'slate-react'
 import { createEditor, Node } from 'slate'
+import { stripHTMLEntities } from './core/utils'
 
 interface Props {
   className?: string
@@ -24,6 +25,14 @@ export const DocmakerEditor = ({ className }: Props) => {
     }
   ])
 
+  const handlePressSave = useCallback(() => {
+    console.log({
+      title: stripHTMLEntities(title),
+      createdAt,
+      template: editorState
+    })
+  }, [title, createdAt, editorState])
+
   return (
     <div className={classnames('font-sans', className)}>
       <Slate editor={editor} value={editorState} onChange={setEditorState}>
@@ -32,6 +41,7 @@ export const DocmakerEditor = ({ className }: Props) => {
             title={title}
             createdAt={createdAt}
             onChangeTitle={setTitle}
+            onPressSave={handlePressSave}
           />
           <Toolbar />
         </div>

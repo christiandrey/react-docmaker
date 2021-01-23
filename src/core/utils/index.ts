@@ -41,3 +41,16 @@ export function toCapitalizedFirst(text: string) {
   }
   return `${text[0]?.toUpperCase()}${text?.substr(1)}`
 }
+
+export function stripHTMLEntities(text: string) {
+  return text
+    ?.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/"/g, '&nbsp;')
+}
+
+// ----------------------------------------------------------------
+// DOCMAKER
+// ----------------------------------------------------------------
