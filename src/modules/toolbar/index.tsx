@@ -1,4 +1,4 @@
-import React, { FC, useRef, Fragment } from 'react'
+import React, { FC, useRef, Fragment, useCallback } from 'react'
 import IconButton from '../icon-button'
 import { RiImage2Fill, RiImageEditFill } from 'react-icons/ri'
 import { GrRedo, GrUndo } from 'react-icons/gr'
@@ -21,15 +21,56 @@ import {
 } from 'react-icons/md'
 import Icon from '../icon'
 import IconGroup from '../icon-group'
-import { usePopupUtils } from '../../core/hooks'
+import {
+  useHeadingFormatType,
+  useMouseDown,
+  usePopupUtils
+} from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
+import {
+  focusEditor,
+  HeadingFormatType,
+  toggleBlockActive
+} from '../../core/tools'
+import { notNil } from '../../core/utils'
+import { useSlate } from 'slate-react'
 
 const Toolbar: FC = () => {
+  const editor = useSlate()
+
   const textSizePopupAnchorRef = useRef(null)
   const colorPopupAnchorRef = useRef(null)
+
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
+
+  const headingFormatType = useHeadingFormatType()
+
+  const handlePressHeadingFormatType = useCallback(
+    (value: HeadingFormatType) => {
+      const prevValue = headingFormatType?.name
+
+      if (value === prevValue) {
+        return
+      }
+
+      if (notNil(prevValue)) {
+        toggleBlockActive(editor, prevValue)
+      }
+
+      if (notNil(value)) {
+        toggleBlockActive(editor, value)
+      }
+
+      focusEditor(editor)
+    },
+    [editor, headingFormatType]
+  )
+
+  const handlePressTextSize = useMouseDown(() => {
+    textSizePopup.open()
+  })
 
   return (
     <Fragment>
@@ -38,13 +79,13 @@ const Toolbar: FC = () => {
           <div
             ref={textSizePopupAnchorRef}
             className='flex items-center w-144 space-x-4 flex-1'
-            onClick={textSizePopup.open}
+            onMouseDown={handlePressTextSize}
           >
             <Icon>
               <MdFormatSize />
             </Icon>
             <span className='flex-1 cursor-pointer transition-colors duration-250 hover:text-blue-500'>
-              Heading 3
+              {headingFormatType?.label || 'Normal'}
             </span>
           </div>
           <div
@@ -123,6 +164,8 @@ const Toolbar: FC = () => {
         </IconGroup>
       </div>
       <TextSizePopup
+        value={headingFormatType?.name}
+        onPressOption={handlePressHeadingFormatType}
         anchorRef={textSizePopupAnchorRef}
         isVisible={textSizePopup.visible}
         onRequestClose={textSizePopup.close}

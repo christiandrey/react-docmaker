@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import { useMouseDown } from '../../core/hooks'
 
 import Content, { ContentDimensions } from './content'
 
@@ -266,9 +267,9 @@ const Popup: React.FC<PopupProps> = ({
     y: 0
   })
 
-  const handleClickOverlay = () => {
+  const handleClickOverlay = useMouseDown(() => {
     if (overlayCloseOnClick) onRequestClose()
-  }
+  })
 
   const handleKeyUp = useCallback(
     (e: KeyboardEvent) => {
@@ -295,7 +296,7 @@ const Popup: React.FC<PopupProps> = ({
             ? 'w-full h-full absolute top-0 left-0 z-0'
             : 'w-full h-full absolute top-0 left-0 z-0 bg-indigo-800 opacity-50'
         }
-        onClick={handleClickOverlay}
+        onMouseDown={handleClickOverlay}
       />
       <Content
         className={contentClassName}

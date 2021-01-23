@@ -1,18 +1,35 @@
-import React, { FC, MutableRefObject, PropsWithChildren } from 'react'
+import React, {
+  FC,
+  MutableRefObject,
+  PropsWithChildren,
+  useCallback
+} from 'react'
 import Popup from '../../popup'
 import classnames from 'classnames'
+import { HeadingFormatType } from '../../../core/tools'
+import { nil } from '../../../core/utils'
+import { useMouseDown } from '../../../core/hooks'
 
 type TextSizePopupProps = {
   anchorRef: MutableRefObject<Element>
   isVisible: boolean
+  value: HeadingFormatType
+  onPressOption?: (value: HeadingFormatType) => void
   onRequestClose: Fn
 }
 
 type TextSizeOptionProps = PropsWithChildren<{
   active?: boolean
+  onPress?: Fn
 }>
 
-const TextSizeOption: FC<TextSizeOptionProps> = ({ active, children }) => {
+const TextSizeOption: FC<TextSizeOptionProps> = ({
+  active,
+  children,
+  onPress
+}) => {
+  const handlePress = useMouseDown(onPress)
+
   return (
     <div
       className={classnames(
@@ -21,6 +38,7 @@ const TextSizeOption: FC<TextSizeOptionProps> = ({ active, children }) => {
           'text-blue-500 bg-blue-highlight': active
         }
       )}
+      onMouseDown={handlePress}
     >
       {children}
     </div>
@@ -30,8 +48,18 @@ const TextSizeOption: FC<TextSizeOptionProps> = ({ active, children }) => {
 const TextSizePopup: FC<TextSizePopupProps> = ({
   anchorRef,
   isVisible,
+  value,
+  onPressOption,
   onRequestClose
 }) => {
+  const handlePressOption = useCallback(
+    (option?: HeadingFormatType) => {
+      onPressOption?.(option)
+      onRequestClose?.()
+    },
+    [onPressOption, onRequestClose]
+  )
+
   return (
     <Popup
       position='down'
@@ -45,16 +73,25 @@ const TextSizePopup: FC<TextSizePopupProps> = ({
       contentClassName='rounded-default'
     >
       <div className='rounded-default w-144 bg-white border border-gray-300 overflow-hidden text-gray-500'>
-        <TextSizeOption>
+        <TextSizeOption active={nil(value)} onPress={() => handlePressOption()}>
           <span className='-ml-1'>Normal</span>
         </TextSizeOption>
-        <TextSizeOption>
+        <TextSizeOption
+          active={value === 'heading-three'}
+          onPress={() => handlePressOption('heading-three')}
+        >
           <span className='text-headline -ml-1'>Heading 3</span>
         </TextSizeOption>
-        <TextSizeOption active>
+        <TextSizeOption
+          active={value === 'heading-two'}
+          onPress={() => handlePressOption('heading-two')}
+        >
           <span className='text-heading-3 -ml-1'>Heading 2</span>
         </TextSizeOption>
-        <TextSizeOption>
+        <TextSizeOption
+          active={value === 'heading-one'}
+          onPress={() => handlePressOption('heading-one')}
+        >
           <span className='text-heading-2 -ml-1'>Heading 1</span>
         </TextSizeOption>
       </div>
