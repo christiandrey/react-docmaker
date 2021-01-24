@@ -3,6 +3,7 @@ import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
 import { CSSProperties } from 'react'
 import { areEqualColors, notNil } from '../utils'
+import { LIST_TYPES } from '../constants'
 
 export type LeafFormatType =
   | 'bold'
@@ -24,8 +25,6 @@ export type ElementFormatType =
   | QuoteFormatType
 
 export type SlateEditorType = Editor & ReactEditor
-
-const LIST_TYPES = ['numbered-list', 'bulleted-list']
 
 export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
   if (!editor) {

@@ -1,6 +1,7 @@
 import React, { FC, memo, PropsWithChildren } from 'react'
 import Icon from '../icon'
 import classnames from 'classnames'
+import { useMouseDown } from '../../core/hooks'
 
 type IconButtonProps = PropsWithChildren<{
   active?: boolean
@@ -14,6 +15,8 @@ const BaseIconButton: FC<IconButtonProps> = ({
   children,
   onPress
 }) => {
+  const handlePress = useMouseDown(onPress)
+
   return (
     <div
       className={classnames(
@@ -23,7 +26,7 @@ const BaseIconButton: FC<IconButtonProps> = ({
         },
         className
       )}
-      onClick={onPress}
+      onMouseDown={handlePress}
     >
       <Icon className='s-20'>{children}</Icon>
     </div>

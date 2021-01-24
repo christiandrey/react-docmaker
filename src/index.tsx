@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  KeyboardEvent
+} from 'react'
 import classnames from 'classnames'
 import 'tailwindcss/tailwind.css'
 import Header from './modules/header'
@@ -11,6 +17,9 @@ import { stripHTMLEntities } from './core/utils'
 import { withHTML } from './core/plugins/paste-html'
 import TemplateElement from './modules/template-element'
 import TemplateLeaf from './modules/template-leaf'
+import { HOT_KEYS } from './core/constants'
+import isHotkey from 'is-hotkey'
+import { toggleMarkActive } from './core/tools'
 
 interface Props {
   className?: string
@@ -38,6 +47,19 @@ export const DocmakerEditor = ({ className }: Props) => {
 
   const renderLeaf = useCallback((props) => <TemplateLeaf {...props} />, [])
 
+  const handleEditorKeydown = useCallback(
+    (event: KeyboardEvent) => {
+      for (const hotkey in HOT_KEYS) {
+        if (isHotkey(hotkey, event as any)) {
+          event.preventDefault()
+          const mark = HOT_KEYS[hotkey]
+          toggleMarkActive(editor, mark)
+        }
+      }
+    },
+    [editor]
+  )
+
   const handlePressSave = useCallback(() => {
     console.log({
       title: stripHTMLEntities(title),
@@ -60,9 +82,11 @@ export const DocmakerEditor = ({ className }: Props) => {
         </div>
         <TemplateEditor>
           <Editable
+            spellCheck
             placeholder='Start typing...'
             renderElement={renderElement}
             renderLeaf={renderLeaf}
+            onKeyDown={handleEditorKeydown}
           />
         </TemplateEditor>
       </Slate>

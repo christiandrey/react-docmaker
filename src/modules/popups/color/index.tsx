@@ -11,6 +11,7 @@ import css from './style.module.css'
 import classnames from 'classnames'
 import { areEqualColors, isHexColor } from '../../../core/utils'
 import { useMouseDown } from '../../../core/hooks'
+import { PRESET_COLORS } from '../../../core/constants'
 
 type ColorPopupProps = {
   anchorRef: MutableRefObject<Element>
@@ -25,22 +26,6 @@ type ColorBoxProps = {
   color: string
   onPress?: (value: string) => void
 }
-
-// -------------------------------------------------------------
-// DEFAULT COLORS
-// -------------------------------------------------------------
-const DEFAULT_COLORS = [
-  '#FF6900',
-  '#FCB900',
-  '#7BDCB5',
-  '#00D084',
-  '#8ED1FC',
-  '#326FF3',
-  '#ABB8C3',
-  '#EB144C',
-  '#F78DA7',
-  '#9900EF'
-]
 
 const BaseColorBox: FC<ColorBoxProps> = ({ active, color, onPress }) => {
   const handlePress = useMouseDown(() => {
@@ -116,7 +101,7 @@ const ColorPopup: FC<ColorPopupProps> = ({
       contentClassName='rounded-default'
     >
       <div className='rounded-default grid grid-cols-7 gap-6 p-8 bg-white border border-gray-300 overflow-hidden text-gray-500'>
-        {DEFAULT_COLORS.map((o) => (
+        {PRESET_COLORS.map((o) => (
           <ColorBox
             color={o}
             key={o}

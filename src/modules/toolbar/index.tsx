@@ -33,8 +33,10 @@ import ColorPopup from '../popups/color'
 import {
   focusEditor,
   HeadingFormatType,
+  isMarkActive,
   toggleBlockActive,
-  toggleColorMarkActive
+  toggleColorMarkActive,
+  toggleMarkActive
 } from '../../core/tools'
 import { nil, notNil } from '../../core/utils'
 import { useSlate } from 'slate-react'
@@ -112,6 +114,22 @@ const Toolbar: FC = () => {
     colorPopup.open()
   })
 
+  const handlePressBold = useCallback(() => {
+    toggleMarkActive(editor, 'bold')
+  }, [editor])
+
+  const handlePressItalic = useCallback(() => {
+    toggleMarkActive(editor, 'italic')
+  }, [editor])
+
+  const handlePressUnderline = useCallback(() => {
+    toggleMarkActive(editor, 'underline')
+  }, [editor])
+
+  const handlePressStrikethrough = useCallback(() => {
+    toggleMarkActive(editor, 'strikethrough')
+  }, [editor])
+
   return (
     <Fragment>
       <div className='border-t border-b border-solid border-gray-300 py-20 px-60 bg-blue-50 flex items-center divide-x divide-gray-300 text-gray-500'>
@@ -141,16 +159,28 @@ const Toolbar: FC = () => {
           />
         </div>
         <IconGroup>
-          <IconButton>
+          <IconButton
+            active={isMarkActive(editor, 'bold')}
+            onPress={handlePressBold}
+          >
             <MdFormatBold />
           </IconButton>
-          <IconButton>
+          <IconButton
+            active={isMarkActive(editor, 'italic')}
+            onPress={handlePressItalic}
+          >
             <MdFormatItalic />
           </IconButton>
-          <IconButton>
+          <IconButton
+            active={isMarkActive(editor, 'underline')}
+            onPress={handlePressUnderline}
+          >
             <MdFormatUnderlined />
           </IconButton>
-          <IconButton>
+          <IconButton
+            active={isMarkActive(editor, 'strikethrough')}
+            onPress={handlePressStrikethrough}
+          >
             <MdFormatStrikethrough />
           </IconButton>
         </IconGroup>
