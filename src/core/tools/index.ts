@@ -2,7 +2,7 @@ import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
 import { CSSProperties } from 'react'
-import { notNil } from '../utils'
+import { areEqualColors, notNil } from '../utils'
 
 export type LeafFormatType =
   | 'bold'
@@ -80,9 +80,9 @@ export function toggleMarkActive(
 }
 
 export function toggleColorMarkActive(editor: SlateEditorType, value?: string) {
-  const isActive = isColorMarkActive(editor)
+  const existingMark = getColorMark(editor)
 
-  if (isActive) {
+  if (notNil(existingMark) && areEqualColors(existingMark, value)) {
     Editor.removeMark(editor, 'color')
   } else {
     Editor.addMark(editor, 'color', value)

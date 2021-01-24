@@ -75,14 +75,16 @@ const Toolbar: FC = () => {
   )
 
   const handleChangeColorOption = useCallback(
-    (value: string) => {
+    (value: string, focus = true) => {
       const prevValue = leafColorValue
 
       if (value === prevValue) {
         return
       }
 
-      Transforms.select(editor, editorSelection.current)
+      if (notNil(editorSelection.current)) {
+        Transforms.select(editor, editorSelection.current)
+      }
 
       if (notNil(prevValue)) {
         toggleColorMarkActive(editor, prevValue)
@@ -92,7 +94,11 @@ const Toolbar: FC = () => {
         toggleColorMarkActive(editor, value)
       }
 
-      focusEditor(editor)
+      editorSelection.current = editor.selection
+
+      if (focus) {
+        focusEditor(editor)
+      }
     },
     [editor, leafColorValue]
   )

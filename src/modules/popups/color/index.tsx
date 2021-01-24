@@ -4,8 +4,7 @@ import React, {
   MutableRefObject,
   useCallback,
   useState,
-  ChangeEvent,
-  useEffect
+  ChangeEvent
 } from 'react'
 import Popup from '../../popup'
 import css from './style.module.css'
@@ -17,7 +16,7 @@ type ColorPopupProps = {
   anchorRef: MutableRefObject<Element>
   isVisible: boolean
   value?: string
-  onChangeColorOption?: (value?: string) => void
+  onChangeColorOption?: (value?: string, focus?: boolean) => void
   onRequestClose: Fn
 }
 
@@ -79,30 +78,30 @@ const ColorPopup: FC<ColorPopupProps> = ({
         return
       }
 
-      if (areEqualColors(value, option)) {
-        onChangeColorOption?.()
-      } else {
-        onChangeColorOption?.(option)
-      }
+      const selectedColor = areEqualColors(value, option) ? null : option
 
+      setColorState(selectedColor?.replaceAll('#', ''))
+      onChangeColorOption?.(selectedColor)
       onRequestClose?.()
     },
     [onChangeColorOption, onRequestClose, value]
   )
 
-  const handleChangeInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setColorState(e.target.value)
-  }, [])
+  const handleChangeInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const inputValue = e.target.value
+      const parsedColor = inputValue?.length
+        ? `#${inputValue.replace('#', '')}`
+        : null
 
-  useEffect(() => {
-    const parsedColor = colorState?.length
-      ? `#${colorState.replace('#', '')}`
-      : null
+      setColorState(e.target.value)
 
-    if (isHexColor(parsedColor)) {
-      onChangeColorOption?.(parsedColor)
-    }
-  }, [colorState, onChangeColorOption])
+      if (isHexColor(parsedColor)) {
+        onChangeColorOption?.(parsedColor, false)
+      }
+    },
+    [onChangeColorOption]
+  )
 
   return (
     <Popup
