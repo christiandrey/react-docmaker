@@ -19,3 +19,10 @@ export const PRESET_COLORS = [
   '#F78DA7',
   '#9900EF'
 ]
+
+export const ALIGNMENTS = {
+  left: 'left',
+  right: 'right',
+  center: 'center',
+  justify: 'justify'
+}

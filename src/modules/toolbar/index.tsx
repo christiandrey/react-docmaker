@@ -26,14 +26,18 @@ import {
   useTextSizeValue,
   useLeafColorValue,
   useMouseDown,
-  usePopupUtils
+  usePopupUtils,
+  useAlignmentValue
 } from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
 import {
+  BlockAlignment,
   focusEditor,
   HeadingFormatType,
   isMarkActive,
+  LeafFormatType,
+  setAlignment,
   toggleBlockActive,
   toggleColorMarkActive,
   toggleMarkActive
@@ -41,6 +45,7 @@ import {
 import { nil, notNil } from '../../core/utils'
 import { useSlate } from 'slate-react'
 import { Transforms } from 'slate'
+import { ALIGNMENTS } from '../../core/constants'
 
 const Toolbar: FC = () => {
   const editor = useSlate()
@@ -54,6 +59,7 @@ const Toolbar: FC = () => {
 
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
+  const alignmentValue = useAlignmentValue()
 
   const handleChangeTextSizeOption = useCallback(
     (value: HeadingFormatType) => {
@@ -114,21 +120,19 @@ const Toolbar: FC = () => {
     colorPopup.open()
   })
 
-  const handlePressBold = useCallback(() => {
-    toggleMarkActive(editor, 'bold')
-  }, [editor])
+  const handlePressInlineFormat = useCallback(
+    (format: LeafFormatType) => {
+      toggleMarkActive(editor, format)
+    },
+    [editor]
+  )
 
-  const handlePressItalic = useCallback(() => {
-    toggleMarkActive(editor, 'italic')
-  }, [editor])
-
-  const handlePressUnderline = useCallback(() => {
-    toggleMarkActive(editor, 'underline')
-  }, [editor])
-
-  const handlePressStrikethrough = useCallback(() => {
-    toggleMarkActive(editor, 'strikethrough')
-  }, [editor])
+  const handlePressAlignment = useCallback(
+    (value?: BlockAlignment) => {
+      setAlignment(editor, value)
+    },
+    [editor]
+  )
 
   return (
     <Fragment>
@@ -160,41 +164,60 @@ const Toolbar: FC = () => {
         </div>
         <IconGroup>
           <IconButton
+            data='bold'
             active={isMarkActive(editor, 'bold')}
-            onPress={handlePressBold}
+            onPress={handlePressInlineFormat}
           >
             <MdFormatBold />
           </IconButton>
           <IconButton
+            data='italic'
             active={isMarkActive(editor, 'italic')}
-            onPress={handlePressItalic}
+            onPress={handlePressInlineFormat}
           >
             <MdFormatItalic />
           </IconButton>
           <IconButton
+            data='underline'
             active={isMarkActive(editor, 'underline')}
-            onPress={handlePressUnderline}
+            onPress={handlePressInlineFormat}
           >
             <MdFormatUnderlined />
           </IconButton>
           <IconButton
+            data='strikethrough'
             active={isMarkActive(editor, 'strikethrough')}
-            onPress={handlePressStrikethrough}
+            onPress={handlePressInlineFormat}
           >
             <MdFormatStrikethrough />
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton>
+          <IconButton
+            active={nil(alignmentValue) || alignmentValue === ALIGNMENTS.left}
+            onPress={handlePressAlignment}
+          >
             <MdFormatAlignLeft />
           </IconButton>
-          <IconButton>
+          <IconButton
+            data='center'
+            active={alignmentValue === ALIGNMENTS.center}
+            onPress={handlePressAlignment}
+          >
             <MdFormatAlignCenter />
           </IconButton>
-          <IconButton>
+          <IconButton
+            data='right'
+            active={alignmentValue === ALIGNMENTS.right}
+            onPress={handlePressAlignment}
+          >
             <MdFormatAlignRight />
           </IconButton>
-          <IconButton>
+          <IconButton
+            data='justify'
+            active={alignmentValue === ALIGNMENTS.justify}
+            onPress={handlePressAlignment}
+          >
             <MdFormatAlignJustify />
           </IconButton>
         </IconGroup>

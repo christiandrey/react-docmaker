@@ -1,6 +1,12 @@
 import { useState, useCallback, useMemo, MouseEvent } from 'react'
 import { useSlate } from 'slate-react'
-import { getColorMark, HeadingFormatType, isBlockActive } from '../tools'
+import {
+  BlockAlignment,
+  getAlignment,
+  getColorMark,
+  HeadingFormatType,
+  isBlockActive
+} from '../tools'
 
 type PopupActions = {
   visible: boolean
@@ -66,6 +72,11 @@ export function useTextSizeValue(): TextSizeValue {
 export function useLeafColorValue(): string {
   const editor = useSlate()
   return getColorMark(editor)
+}
+
+export function useAlignmentValue(): BlockAlignment {
+  const editor = useSlate()
+  return getAlignment(editor)
 }
 
 export function useMouseDown(fn: Fn): (e: MouseEvent) => void {

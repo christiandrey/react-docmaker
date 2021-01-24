@@ -5,6 +5,8 @@ import { CSSProperties } from 'react'
 import { areEqualColors, notNil } from '../utils'
 import { LIST_TYPES } from '../constants'
 
+export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
+
 export type LeafFormatType =
   | 'bold'
   | 'code'
@@ -25,6 +27,18 @@ export type ElementFormatType =
   | QuoteFormatType
 
 export type SlateEditorType = Editor & ReactEditor
+
+export function isBlockActive(
+  editor: SlateEditorType,
+  format: ElementFormatType
+) {
+  const [match] = Editor.nodes(editor, {
+    match: (n) =>
+      !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === format
+  }) as any
+
+  return !!match
+}
 
 export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
   if (!editor) {
@@ -51,18 +65,6 @@ export function getColorMark(editor: SlateEditorType) {
 
   const marks = Editor.marks(editor)
   return marks?.color
-}
-
-export function isBlockActive(
-  editor: SlateEditorType,
-  format: ElementFormatType
-) {
-  const [match] = Editor.nodes(editor, {
-    match: (n) =>
-      !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === format
-  }) as any
-
-  return !!match
 }
 
 export function toggleMarkActive(
@@ -155,9 +157,48 @@ export function composeWithClassName(attributes: any, className?: string) {
   }
 }
 
+export function composeWithAlignmentClassName(
+  attributes: any,
+  alignment?: BlockAlignment,
+  className?: string
+) {
+  return {
+    ...attributes,
+    className: classnames(attributes?.className, className, {
+      'text-right': alignment === 'right',
+      'text-center': alignment === 'center',
+      'text-justify': alignment === 'justify'
+    })
+  }
+}
+
 export function composeWithStyle(attributes: any, style: CSSProperties = {}) {
   return {
     ...attributes,
     style: { ...(attributes?.style || {}), ...style }
+  }
+}
+
+export function setAlignment(editor: SlateEditorType, value?: BlockAlignment) {
+  const alignment = value === 'left' ? null : value
+  const newProperties: Partial<SlateElement> = {
+    alignment
+  }
+
+  Transforms.setNodes(editor, newProperties)
+}
+
+export function getAlignment(editor: SlateEditorType): BlockAlignment {
+  const currentNode = getCurrentNode(editor) as any
+  return currentNode?.alignment
+}
+
+export function getCurrentNode(editor: SlateEditorType) {
+  const selection = editor?.selection
+
+  if (selection !== null && selection.anchor !== null) {
+    return editor.children[selection.anchor.path[0]]
+  } else {
+    return null
   }
 }

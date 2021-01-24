@@ -6,16 +6,20 @@ import { useMouseDown } from '../../core/hooks'
 type IconButtonProps = PropsWithChildren<{
   active?: boolean
   className?: string
+  data?: string
   onPress?: Fn
 }>
 
 const BaseIconButton: FC<IconButtonProps> = ({
   active,
+  data,
   className,
   children,
   onPress
 }) => {
-  const handlePress = useMouseDown(onPress)
+  const handlePress = useMouseDown(() => {
+    onPress?.(data)
+  })
 
   return (
     <div

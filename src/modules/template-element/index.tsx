@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren } from 'react'
 import ImageElement, { ImageElementType } from '../elements/image'
-import { composeWithClassName } from '../../core/tools'
+import { BlockAlignment, composeWithAlignmentClassName } from '../../core/tools'
 
 export type ElementType =
   | 'quote'
@@ -19,6 +19,7 @@ export type ElementType =
 
 type TemplateElementType = {
   type: ElementType
+  alignment?: BlockAlignment
 } & ImageElementType
 
 type TemplateElementProps = PropsWithChildren<{
@@ -31,9 +32,15 @@ const TemplateElement: FC<TemplateElementProps> = ({
   children,
   element
 }) => {
-  switch (element.type) {
+  const { type, url, alignment } = element
+
+  switch (type) {
     default:
-      return <p {...attributes}>{children}</p>
+      return (
+        <p {...composeWithAlignmentClassName(attributes, alignment)}>
+          {children}
+        </p>
+      )
     case 'quote':
       return <blockquote {...attributes}>{children}</blockquote>
     case 'code':
@@ -46,19 +53,37 @@ const TemplateElement: FC<TemplateElementProps> = ({
       return <ul {...attributes}>{children}</ul>
     case 'heading-one':
       return (
-        <h1 {...composeWithClassName(attributes, 'text-heading-2')}>
+        <h1
+          {...composeWithAlignmentClassName(
+            attributes,
+            alignment,
+            'text-heading-2'
+          )}
+        >
           {children}
         </h1>
       )
     case 'heading-two':
       return (
-        <h2 {...composeWithClassName(attributes, 'text-heading-3')}>
+        <h2
+          {...composeWithAlignmentClassName(
+            attributes,
+            alignment,
+            'text-heading-3'
+          )}
+        >
           {children}
         </h2>
       )
     case 'heading-three':
       return (
-        <h3 {...composeWithClassName(attributes, 'text-headline')}>
+        <h3
+          {...composeWithAlignmentClassName(
+            attributes,
+            alignment,
+            'text-headline'
+          )}
+        >
           {children}
         </h3>
       )
@@ -74,7 +99,7 @@ const TemplateElement: FC<TemplateElementProps> = ({
       return <ol {...attributes}>{children}</ol>
     case 'link':
       return (
-        <a href={element.url} {...attributes}>
+        <a href={url} {...attributes}>
           {children}
         </a>
       )
