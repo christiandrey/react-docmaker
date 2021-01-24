@@ -50,3 +50,14 @@ export function stripHTMLEntities(text: string) {
     .replace(/"/g, '&quot;')
     .replace(/"/g, '&nbsp;')
 }
+
+export function isHexColor(text: string) {
+  return /^#([0-9A-F]{3}){1,2}$/i.test(text)
+}
+
+export function areEqualColors(left: string, right: string) {
+  left = left?.replace(/^#/gi, '')?.toLowerCase()
+  right = right?.replace(/^#/gi, '')?.toLowerCase()
+
+  return left === right
+}

@@ -1,11 +1,23 @@
-import React, { FC, memo, MutableRefObject } from 'react'
+import React, {
+  FC,
+  memo,
+  MutableRefObject,
+  useCallback,
+  useState,
+  ChangeEvent,
+  useEffect
+} from 'react'
 import Popup from '../../popup'
 import css from './style.module.css'
 import classnames from 'classnames'
+import { areEqualColors, isHexColor } from '../../../core/utils'
+import { useMouseDown } from '../../../core/hooks'
 
 type ColorPopupProps = {
   anchorRef: MutableRefObject<Element>
   isVisible: boolean
+  value?: string
+  onChangeColorOption?: (value?: string) => void
   onRequestClose: Fn
 }
 
@@ -32,14 +44,14 @@ const DEFAULT_COLORS = [
 ]
 
 const BaseColorBox: FC<ColorBoxProps> = ({ active, color, onPress }) => {
-  const handlePress = () => {
+  const handlePress = useMouseDown(() => {
     onPress?.(color)
-  }
+  })
 
   return (
     <div
       style={{ color }}
-      onClick={handlePress}
+      onMouseDown={handlePress}
       title={color}
       className={classnames(
         's-32 rounded-default bg-current cursor-pointer transition-shadow duration-250',
@@ -55,8 +67,43 @@ const ColorBox = memo(BaseColorBox)
 const ColorPopup: FC<ColorPopupProps> = ({
   anchorRef,
   isVisible,
+  value,
+  onChangeColorOption,
   onRequestClose
 }) => {
+  const [colorState, setColorState] = useState('')
+
+  const handlePressColorOption = useCallback(
+    (option: string) => {
+      if (!isHexColor(option)) {
+        return
+      }
+
+      if (areEqualColors(value, option)) {
+        onChangeColorOption?.()
+      } else {
+        onChangeColorOption?.(option)
+      }
+
+      onRequestClose?.()
+    },
+    [onChangeColorOption, onRequestClose, value]
+  )
+
+  const handleChangeInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setColorState(e.target.value)
+  }, [])
+
+  useEffect(() => {
+    const parsedColor = colorState?.length
+      ? `#${colorState.replace('#', '')}`
+      : null
+
+    if (isHexColor(parsedColor)) {
+      onChangeColorOption?.(parsedColor)
+    }
+  }, [colorState, onChangeColorOption])
+
   return (
     <Popup
       position='down'
@@ -71,7 +118,12 @@ const ColorPopup: FC<ColorPopupProps> = ({
     >
       <div className='rounded-default grid grid-cols-7 gap-6 p-8 bg-white border border-gray-300 overflow-hidden text-gray-500'>
         {DEFAULT_COLORS.map((o) => (
-          <ColorBox color={o} key={o} />
+          <ColorBox
+            color={o}
+            key={o}
+            onPress={handlePressColorOption}
+            active={areEqualColors(value, o)}
+          />
         ))}
         <div className='h-32 col-span-4 overflow-hidden rounded-default border border-gray-200 flex items-center justify-start'>
           <div className='flex s-32 rounded-default rounded-r-none rounded-b-none bg-gray-200 text-gray-500 items-center justify-center font-semibold'>
@@ -84,6 +136,9 @@ const ColorPopup: FC<ColorPopupProps> = ({
               css.input
             )}
             type='text'
+            placeholder={value?.replace('#', '')}
+            value={colorState}
+            onChange={handleChangeInput}
           />
         </div>
       </div>

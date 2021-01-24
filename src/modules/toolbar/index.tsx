@@ -1,6 +1,7 @@
 import React, { FC, useRef, Fragment, useCallback } from 'react'
 import IconButton from '../icon-button'
 import { RiImage2Fill, RiImageEditFill } from 'react-icons/ri'
+import classnames from 'classnames'
 import { GrRedo, GrUndo } from 'react-icons/gr'
 import {
   MdFormatAlignCenter,
@@ -23,6 +24,7 @@ import Icon from '../icon'
 import IconGroup from '../icon-group'
 import {
   useHeadingFormatType,
+  useLeafColorValue,
   useMouseDown,
   usePopupUtils
 } from '../../core/hooks'
@@ -31,13 +33,16 @@ import ColorPopup from '../popups/color'
 import {
   focusEditor,
   HeadingFormatType,
-  toggleBlockActive
+  toggleBlockActive,
+  toggleColorMarkActive
 } from '../../core/tools'
-import { notNil } from '../../core/utils'
+import { nil, notNil } from '../../core/utils'
 import { useSlate } from 'slate-react'
+import { Transforms } from 'slate'
 
 const Toolbar: FC = () => {
   const editor = useSlate()
+  const editorSelection = useRef(editor.selection)
 
   const textSizePopupAnchorRef = useRef(null)
   const colorPopupAnchorRef = useRef(null)
@@ -46,6 +51,7 @@ const Toolbar: FC = () => {
   const colorPopup = usePopupUtils()
 
   const headingFormatType = useHeadingFormatType()
+  const leafColorValue = useLeafColorValue()
 
   const handlePressHeadingFormatType = useCallback(
     (value: HeadingFormatType) => {
@@ -68,8 +74,36 @@ const Toolbar: FC = () => {
     [editor, headingFormatType]
   )
 
+  const handleChangeColorOption = useCallback(
+    (value: string) => {
+      const prevValue = leafColorValue
+
+      if (value === prevValue) {
+        return
+      }
+
+      Transforms.select(editor, editorSelection.current)
+
+      if (notNil(prevValue)) {
+        toggleColorMarkActive(editor, prevValue)
+      }
+
+      if (notNil(value)) {
+        toggleColorMarkActive(editor, value)
+      }
+
+      focusEditor(editor)
+    },
+    [editor, leafColorValue]
+  )
+
   const handlePressTextSize = useMouseDown(() => {
     textSizePopup.open()
+  })
+
+  const handlePressColor = useMouseDown(() => {
+    editorSelection.current = editor.selection
+    colorPopup.open()
   })
 
   return (
@@ -90,8 +124,14 @@ const Toolbar: FC = () => {
           </div>
           <div
             ref={colorPopupAnchorRef}
-            className='s-28 cursor-pointer border-2 border-solid border-white mx-16 bg-blue-500 rounded-full shadow-2'
-            onClick={colorPopup.open}
+            className={classnames(
+              's-28 cursor-pointer border-2 border-solid border-white mx-16 rounded-full shadow-2 transition-colors duration-250',
+              {
+                'bg-black': nil(leafColorValue)
+              }
+            )}
+            style={{ backgroundColor: leafColorValue }}
+            onMouseDown={handlePressColor}
           />
         </div>
         <IconGroup>
@@ -164,15 +204,17 @@ const Toolbar: FC = () => {
         </IconGroup>
       </div>
       <TextSizePopup
-        value={headingFormatType?.name}
-        onPressOption={handlePressHeadingFormatType}
         anchorRef={textSizePopupAnchorRef}
         isVisible={textSizePopup.visible}
+        value={headingFormatType?.name}
+        onPressOption={handlePressHeadingFormatType}
         onRequestClose={textSizePopup.close}
       />
       <ColorPopup
         anchorRef={colorPopupAnchorRef}
         isVisible={colorPopup.visible}
+        value={leafColorValue}
+        onChangeColorOption={handleChangeColorOption}
         onRequestClose={colorPopup.close}
       />
     </Fragment>

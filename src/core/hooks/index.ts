@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, MouseEvent } from 'react'
 import { useSlate } from 'slate-react'
-import { HeadingFormatType, isBlockActive } from '../tools'
+import { getColorMark, HeadingFormatType, isBlockActive } from '../tools'
 
 type PopupActions = {
   visible: boolean
@@ -61,6 +61,11 @@ export function useHeadingFormatType(): HeadingFormatResult {
   )
 
   return results.find((o) => o.value)
+}
+
+export function useLeafColorValue(): string {
+  const editor = useSlate()
+  return getColorMark(editor)
 }
 
 export function useMouseDown(fn: Fn): (e: MouseEvent) => void {

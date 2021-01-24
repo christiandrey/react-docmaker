@@ -1,6 +1,8 @@
 import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
+import { CSSProperties } from 'react'
+import { notNil } from '../utils'
 
 export type LeafFormatType =
   | 'bold'
@@ -8,6 +10,7 @@ export type LeafFormatType =
   | 'italic'
   | 'underline'
   | 'strikethrough'
+  | 'color'
 
 export type HeadingFormatType = 'heading-one' | 'heading-two' | 'heading-three'
 
@@ -33,6 +36,24 @@ export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
   return marks ? marks[format] === true : false
 }
 
+export function isColorMarkActive(editor: SlateEditorType) {
+  if (!editor) {
+    return null
+  }
+
+  const marks = Editor.marks(editor)
+  return marks ? notNil(marks.color) : false
+}
+
+export function getColorMark(editor: SlateEditorType) {
+  if (!editor) {
+    return null
+  }
+
+  const marks = Editor.marks(editor)
+  return marks?.color
+}
+
 export function isBlockActive(
   editor: SlateEditorType,
   format: ElementFormatType
@@ -55,6 +76,16 @@ export function toggleMarkActive(
     Editor.removeMark(editor, format)
   } else {
     Editor.addMark(editor, format, true)
+  }
+}
+
+export function toggleColorMarkActive(editor: SlateEditorType, value?: string) {
+  const isActive = isColorMarkActive(editor)
+
+  if (isActive) {
+    Editor.removeMark(editor, 'color')
+  } else {
+    Editor.addMark(editor, 'color', value)
   }
 }
 
@@ -122,5 +153,12 @@ export function composeWithClassName(attributes: any, className?: string) {
   return {
     ...attributes,
     className: classnames(attributes?.className, className)
+  }
+}
+
+export function composeWithStyle(attributes: any, style: CSSProperties = {}) {
+  return {
+    ...attributes,
+    style: { ...(attributes?.style || {}), ...style }
   }
 }

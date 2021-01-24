@@ -1,4 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react'
+import { composeWithStyle } from '../../core/tools'
 
 export type TemplateLeafType = Partial<{
   bold: boolean
@@ -6,6 +7,7 @@ export type TemplateLeafType = Partial<{
   italic: boolean
   underline: boolean
   strikethrough: boolean
+  color: string
 }>
 
 type TemplateLeafProps = PropsWithChildren<{
@@ -38,7 +40,11 @@ const TemplateLeaf: FC<TemplateLeafProps> = ({
     children = <del>{children}</del>
   }
 
-  return <span {...attributes}>{children}</span>
+  return (
+    <span {...composeWithStyle(attributes, { color: leaf.color })}>
+      {children}
+    </span>
+  )
 }
 
 export default TemplateLeaf
