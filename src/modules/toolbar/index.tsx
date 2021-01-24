@@ -37,6 +37,7 @@ import {
   focusEditor,
   HeadingFormatType,
   increaseIndentation,
+  isBlockActive,
   isMarkActive,
   LeafFormatType,
   setAlignment,
@@ -144,6 +145,14 @@ const Toolbar: FC = () => {
     decreaseIndentation(editor)
   }, [editor])
 
+  const handlePressNumberedList = useCallback(() => {
+    toggleBlockActive(editor, 'numbered-list')
+  }, [editor])
+
+  const handlePressBulletedList = useCallback(() => {
+    toggleBlockActive(editor, 'bulleted-list')
+  }, [editor])
+
   return (
     <Fragment>
       <div className='border-t border-b border-solid border-gray-300 py-20 px-60 bg-blue-50 flex items-center divide-x divide-gray-300 text-gray-500'>
@@ -232,18 +241,24 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton onPress={handlePressIncreaseIndentation}>
-            <MdFormatIndentIncrease />
-          </IconButton>
           <IconButton onPress={handlePressDecreaseIndentation}>
             <MdFormatIndentDecrease />
           </IconButton>
+          <IconButton onPress={handlePressIncreaseIndentation}>
+            <MdFormatIndentIncrease />
+          </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton>
+          <IconButton
+            active={isBlockActive(editor, 'numbered-list')}
+            onPress={handlePressNumberedList}
+          >
             <MdFormatListNumbered />
           </IconButton>
-          <IconButton>
+          <IconButton
+            active={isBlockActive(editor, 'bulleted-list')}
+            onPress={handlePressBulletedList}
+          >
             <MdFormatListBulleted />
           </IconButton>
         </IconGroup>

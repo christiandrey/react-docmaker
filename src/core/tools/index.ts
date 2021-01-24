@@ -183,7 +183,13 @@ export function getCurrentNode(editor: SlateEditorType) {
   const selection = editor?.selection
 
   if (selection !== null && selection.anchor !== null) {
-    return editor.children[selection.anchor.path[0]]
+    const parentNode = editor.children[selection.anchor.path[0]]
+
+    if (LIST_TYPES.includes(parentNode?.type as BlockAlignment)) {
+      return parentNode.children[selection.anchor.path[1]]
+    }
+
+    return parentNode
   } else {
     return null
   }

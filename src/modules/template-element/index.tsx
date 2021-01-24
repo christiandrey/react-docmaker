@@ -3,6 +3,7 @@ import ImageElement, { ImageElementType } from '../elements/image'
 import {
   BlockAlignment,
   composeWithAlignmentClassName,
+  composeWithClassName,
   composeWithStyle,
   getIndentationPercent
 } from '../../core/tools'
@@ -61,7 +62,11 @@ const TemplateElement: FC<TemplateElementProps> = ({
         </pre>
       )
     case 'bulleted-list':
-      return <ul {...attributes}>{children}</ul>
+      return (
+        <ul {...composeWithClassName(attributes, 'list-disc list-inside')}>
+          {children}
+        </ul>
+      )
     case 'heading-one':
       return (
         <h1
@@ -114,9 +119,21 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'heading-six':
       return <h6 {...attributes}>{children}</h6>
     case 'list-item':
-      return <li {...attributes}>{children}</li>
+      return (
+        <li
+          {...composeWithStyle(attributes, {
+            paddingLeft: getIndentationPercent(indentation)
+          })}
+        >
+          {children}
+        </li>
+      )
     case 'numbered-list':
-      return <ol {...attributes}>{children}</ol>
+      return (
+        <ol {...composeWithClassName(attributes, 'list-decimal list-inside')}>
+          {children}
+        </ol>
+      )
     case 'link':
       return (
         <a href={url} {...attributes}>
