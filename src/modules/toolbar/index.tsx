@@ -23,7 +23,7 @@ import {
 import Icon from '../icon'
 import IconGroup from '../icon-group'
 import {
-  useHeadingFormatType,
+  useTextSizeValue,
   useLeafColorValue,
   useMouseDown,
   usePopupUtils
@@ -50,12 +50,12 @@ const Toolbar: FC = () => {
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
 
-  const headingFormatType = useHeadingFormatType()
+  const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
 
-  const handlePressHeadingFormatType = useCallback(
+  const handleChangeTextSizeOption = useCallback(
     (value: HeadingFormatType) => {
-      const prevValue = headingFormatType?.name
+      const prevValue = textSizeValue?.name
 
       if (value === prevValue) {
         return
@@ -71,7 +71,7 @@ const Toolbar: FC = () => {
 
       focusEditor(editor)
     },
-    [editor, headingFormatType]
+    [editor, textSizeValue]
   )
 
   const handleChangeColorOption = useCallback(
@@ -125,7 +125,7 @@ const Toolbar: FC = () => {
               <MdFormatSize />
             </Icon>
             <span className='flex-1 cursor-pointer transition-colors duration-250 hover:text-blue-500'>
-              {headingFormatType?.label || 'Normal'}
+              {textSizeValue?.label || 'Normal'}
             </span>
           </div>
           <div
@@ -212,8 +212,8 @@ const Toolbar: FC = () => {
       <TextSizePopup
         anchorRef={textSizePopupAnchorRef}
         isVisible={textSizePopup.visible}
-        value={headingFormatType?.name}
-        onPressOption={handlePressHeadingFormatType}
+        value={textSizeValue?.name}
+        onPressOption={handleChangeTextSizeOption}
         onRequestClose={textSizePopup.close}
       />
       <ColorPopup

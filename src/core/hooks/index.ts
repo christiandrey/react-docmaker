@@ -9,7 +9,7 @@ type PopupActions = {
   toggle: Fn
 }
 
-export type HeadingFormatResult = {
+export type TextSizeValue = {
   name: HeadingFormatType
   label: string
   value: boolean
@@ -43,7 +43,7 @@ export function usePopupUtils(initialOpen: boolean = false): PopupActions {
   return popupActions
 }
 
-export function useHeadingFormatType(): HeadingFormatResult {
+export function useTextSizeValue(): TextSizeValue {
   const editor = useSlate()
 
   const headingOneActive = isBlockActive(editor, 'heading-one')
@@ -56,7 +56,7 @@ export function useHeadingFormatType(): HeadingFormatResult {
         { name: 'heading-one', label: 'Heading 1', value: headingOneActive },
         { name: 'heading-two', label: 'Heading 2', value: headingTwoActive },
         { name: 'heading-three', label: 'Heading 3', value: headingThreeActive }
-      ] as Array<HeadingFormatResult>,
+      ] as Array<TextSizeValue>,
     [headingOneActive, headingThreeActive, headingTwoActive]
   )
 
