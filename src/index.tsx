@@ -19,7 +19,7 @@ import TemplateElement from './modules/template-element'
 import TemplateLeaf from './modules/template-leaf'
 import { HOT_KEYS } from './core/constants'
 import isHotkey from 'is-hotkey'
-import { toggleMarkActive } from './core/tools'
+import { SlateEditorType, toggleMarkActive } from './core/tools'
 
 interface Props {
   className?: string
@@ -53,7 +53,7 @@ export const DocmakerEditor = ({ className }: Props) => {
         if (isHotkey(hotkey, event as any)) {
           event.preventDefault()
           const mark = HOT_KEYS[hotkey]
-          toggleMarkActive(editor, mark)
+          toggleMarkActive(editor as SlateEditorType, mark)
         }
       }
     },

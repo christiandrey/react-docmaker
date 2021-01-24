@@ -4,6 +4,8 @@ import classnames from 'classnames'
 
 export type ImageElementType = {
   url: string
+  width?: number
+  height?: number
 }
 
 type ImageElementProps = PropsWithChildren<{
@@ -20,15 +22,19 @@ const ImageElement: FC<ImageElementProps> = ({
   const focused = useFocused()
 
   return (
-    <div {...attributes}>
+    <span {...attributes}>
       {children}
       <img
         src={element.url}
-        className={classnames('block max-w-full max-h-120 rounded-default', {
-          'shadow-outline': selected && focused
-        })}
+        style={{ width: element.width, height: element.height }}
+        className={classnames(
+          'inline-block max-w-full rounded-default align-bottom',
+          {
+            'shadow-outline': selected && focused
+          }
+        )}
       />
-    </div>
+    </span>
   )
 }
 

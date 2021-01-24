@@ -1,4 +1,4 @@
-import { Editor, Transforms } from 'slate'
+import { Editor, Transforms, Element as SlateElement } from 'slate'
 import { jsx } from 'slate-hyperscript'
 import { ReactEditor } from 'slate-react'
 
@@ -77,8 +77,10 @@ export const deserializeHTML = (el: ChildNode) => {
 export const withHTML = (editor: Editor & ReactEditor) => {
   const { insertData, isInline, isVoid } = editor
 
-  editor.isInline = (element) => {
-    return element.type === 'link' ? true : isInline(element)
+  editor.isInline = (element: SlateElement) => {
+    return ['link', 'image'].includes(element.type as string)
+      ? true
+      : isInline(element)
   }
 
   editor.isVoid = (element) => {

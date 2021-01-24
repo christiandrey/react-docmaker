@@ -40,6 +40,7 @@ import {
   focusEditor,
   HeadingFormatType,
   increaseIndentation,
+  insertImageBlock,
   isBlockActive,
   isMarkActive,
   LeafFormatType,
@@ -52,6 +53,7 @@ import { nil, notNil } from '../../core/utils'
 import { Transforms } from 'slate'
 import { ALIGNMENTS } from '../../core/constants'
 import { HistoryEditor } from 'slate-history'
+import ImagePopup, { ImageProps } from '../popups/image'
 
 const Toolbar: FC = () => {
   const editor = useEditor()
@@ -59,9 +61,11 @@ const Toolbar: FC = () => {
 
   const textSizePopupAnchorRef = useRef(null)
   const colorPopupAnchorRef = useRef(null)
+  const imagePopupAnchorRef = useRef(null)
 
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
+  const imagePopup = usePopupUtils()
 
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
@@ -119,6 +123,18 @@ const Toolbar: FC = () => {
     [editor, leafColorValue]
   )
 
+  const handleCreateImage = useCallback(
+    (value: ImageProps) => {
+      if (notNil(editorSelection.current)) {
+        Transforms.select(editor, editorSelection.current)
+      }
+
+      insertImageBlock(editor, value)
+      focusEditor(editor)
+    },
+    [editor]
+  )
+
   const handlePressTextSize = useMouseDown(() => {
     textSizePopup.open()
   })
@@ -126,6 +142,11 @@ const Toolbar: FC = () => {
   const handlePressColor = useMouseDown(() => {
     editorSelection.current = editor.selection
     colorPopup.open()
+  })
+
+  const handlePressImage = useMouseDown(() => {
+    editorSelection.current = editor.selection
+    imagePopup.open()
   })
 
   const handlePressInlineFormat = useCallback(
@@ -276,7 +297,11 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton>
+          <IconButton
+            ref={imagePopupAnchorRef}
+            active={imagePopup.visible}
+            onPress={handlePressImage}
+          >
             <RiImage2Fill />
           </IconButton>
         </IconGroup>
@@ -313,6 +338,12 @@ const Toolbar: FC = () => {
         value={leafColorValue}
         onChangeColorOption={handleChangeColorOption}
         onRequestClose={colorPopup.close}
+      />
+      <ImagePopup
+        anchorRef={imagePopupAnchorRef}
+        isVisible={imagePopup.visible}
+        onRequestClose={imagePopup.close}
+        onSubmitEditing={handleCreateImage}
       />
     </Fragment>
   )

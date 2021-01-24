@@ -5,6 +5,8 @@ import { CSSProperties } from 'react'
 import { areEqualColors, clamp, notNil } from '../utils'
 import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
 import { HistoryEditor } from 'slate-history'
+import { ImageProps } from '../../modules/popups/image'
+import { ImageElementType } from '../../modules/elements/image'
 
 export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
 
@@ -27,7 +29,7 @@ export type ElementFormatType =
   | ListFormatType
   | QuoteFormatType
 
-export type SlateEditorType = ReactEditor & HistoryEditor
+export type SlateEditorType = Editor & ReactEditor & HistoryEditor
 
 export function isBlockActive(
   editor: SlateEditorType,
@@ -241,4 +243,25 @@ export function decreaseIndentation(editor: SlateEditorType) {
   }
 
   Transforms.setNodes(editor, newProperties)
+}
+
+export function insertImageBlock(
+  editor: SlateEditorType,
+  attributes: ImageProps
+) {
+  const {
+    url,
+    dimensions: { width, height }
+  } = attributes
+
+  const imageNode: SlateElement & ImageElementType = {
+    type: 'image',
+    url,
+    width,
+    height,
+    children: [{ text: '' }]
+  }
+
+  Transforms.insertNodes(editor, imageNode)
+  Transforms.move(editor)
 }

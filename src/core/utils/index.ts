@@ -1,5 +1,10 @@
 import formatRelative from 'date-fns/formatRelative'
 
+export type ImageDimensions = {
+  width: number
+  height: number
+}
+
 // ----------------------------------------------------------------
 // UTILITY
 // ----------------------------------------------------------------
@@ -10,6 +15,26 @@ export function nil<T>(value: T): boolean {
 
 export function notNil<T>(value: T): boolean {
   return !nil(value)
+}
+
+export function getImageSizeAsync(url: string): Promise<ImageDimensions> {
+  if (!url) {
+    return null
+  }
+
+  return new Promise((resolve) => {
+    const img = document.createElement('img')
+
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+    }
+
+    img.onerror = () => {
+      resolve(null)
+    }
+
+    img.src = url
+  })
 }
 
 // ----------------------------------------------------------------
