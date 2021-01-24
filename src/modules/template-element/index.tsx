@@ -1,6 +1,11 @@
 import React, { FC, PropsWithChildren } from 'react'
 import ImageElement, { ImageElementType } from '../elements/image'
-import { BlockAlignment, composeWithAlignmentClassName } from '../../core/tools'
+import {
+  BlockAlignment,
+  composeWithAlignmentClassName,
+  composeWithStyle,
+  getIndentationPercent
+} from '../../core/tools'
 
 export type ElementType =
   | 'quote'
@@ -20,6 +25,7 @@ export type ElementType =
 type TemplateElementType = {
   type: ElementType
   alignment?: BlockAlignment
+  indentation?: number
 } & ImageElementType
 
 type TemplateElementProps = PropsWithChildren<{
@@ -32,12 +38,17 @@ const TemplateElement: FC<TemplateElementProps> = ({
   children,
   element
 }) => {
-  const { type, url, alignment } = element
+  const { type, url, alignment, indentation } = element
 
   switch (type) {
     default:
       return (
-        <p {...composeWithAlignmentClassName(attributes, alignment)}>
+        <p
+          {...composeWithStyle(
+            composeWithAlignmentClassName(attributes, alignment),
+            { paddingLeft: getIndentationPercent(indentation) }
+          )}
+        >
           {children}
         </p>
       )
@@ -54,10 +65,13 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'heading-one':
       return (
         <h1
-          {...composeWithAlignmentClassName(
-            attributes,
-            alignment,
-            'text-heading-2'
+          {...composeWithStyle(
+            composeWithAlignmentClassName(
+              attributes,
+              alignment,
+              'text-heading-2'
+            ),
+            { paddingLeft: getIndentationPercent(indentation) }
           )}
         >
           {children}
@@ -66,10 +80,13 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'heading-two':
       return (
         <h2
-          {...composeWithAlignmentClassName(
-            attributes,
-            alignment,
-            'text-heading-3'
+          {...composeWithStyle(
+            composeWithAlignmentClassName(
+              attributes,
+              alignment,
+              'text-heading-3'
+            ),
+            { paddingLeft: getIndentationPercent(indentation) }
           )}
         >
           {children}
@@ -78,11 +95,14 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'heading-three':
       return (
         <h3
-          {...composeWithAlignmentClassName(
-            attributes,
-            alignment,
-            'text-headline'
-          )}
+          {...(composeWithStyle(
+            composeWithAlignmentClassName(
+              attributes,
+              alignment,
+              'text-headline'
+            )
+          ),
+          { paddingLeft: getIndentationPercent(indentation) })}
         >
           {children}
         </h3>

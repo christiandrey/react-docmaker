@@ -33,8 +33,10 @@ import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
 import {
   BlockAlignment,
+  decreaseIndentation,
   focusEditor,
   HeadingFormatType,
+  increaseIndentation,
   isMarkActive,
   LeafFormatType,
   setAlignment,
@@ -134,6 +136,14 @@ const Toolbar: FC = () => {
     [editor]
   )
 
+  const handlePressIncreaseIndentation = useCallback(() => {
+    increaseIndentation(editor)
+  }, [editor])
+
+  const handlePressDecreaseIndentation = useCallback(() => {
+    decreaseIndentation(editor)
+  }, [editor])
+
   return (
     <Fragment>
       <div className='border-t border-b border-solid border-gray-300 py-20 px-60 bg-blue-50 flex items-center divide-x divide-gray-300 text-gray-500'>
@@ -222,10 +232,10 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton>
+          <IconButton onPress={handlePressIncreaseIndentation}>
             <MdFormatIndentIncrease />
           </IconButton>
-          <IconButton>
+          <IconButton onPress={handlePressDecreaseIndentation}>
             <MdFormatIndentDecrease />
           </IconButton>
         </IconGroup>

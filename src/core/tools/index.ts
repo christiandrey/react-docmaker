@@ -2,8 +2,8 @@ import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
 import { CSSProperties } from 'react'
-import { areEqualColors, notNil } from '../utils'
-import { LIST_TYPES } from '../constants'
+import { areEqualColors, clamp, notNil } from '../utils'
+import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
 
 export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
 
@@ -179,6 +179,21 @@ export function composeWithStyle(attributes: any, style: CSSProperties = {}) {
   }
 }
 
+export function getCurrentNode(editor: SlateEditorType) {
+  const selection = editor?.selection
+
+  if (selection !== null && selection.anchor !== null) {
+    return editor.children[selection.anchor.path[0]]
+  } else {
+    return null
+  }
+}
+
+export function getAlignment(editor: SlateEditorType): BlockAlignment {
+  const currentNode = getCurrentNode(editor) as any
+  return currentNode?.alignment
+}
+
 export function setAlignment(editor: SlateEditorType, value?: BlockAlignment) {
   const alignment = value === 'left' ? null : value
   const newProperties: Partial<SlateElement> = {
@@ -188,17 +203,35 @@ export function setAlignment(editor: SlateEditorType, value?: BlockAlignment) {
   Transforms.setNodes(editor, newProperties)
 }
 
-export function getAlignment(editor: SlateEditorType): BlockAlignment {
+export function getIndentation(editor: SlateEditorType): number {
   const currentNode = getCurrentNode(editor) as any
-  return currentNode?.alignment
+  return currentNode?.indentation
 }
 
-export function getCurrentNode(editor: SlateEditorType) {
-  const selection = editor?.selection
-
-  if (selection !== null && selection.anchor !== null) {
-    return editor.children[selection.anchor.path[0]]
-  } else {
+export function getIndentationPercent(value: number): string {
+  if (!value) {
     return null
   }
+
+  return `${value}%`
+}
+
+export function increaseIndentation(editor: SlateEditorType) {
+  const currentIndentation = getIndentation(editor) || 0
+  const indentation = clamp(currentIndentation + INDENTATION_FACTOR, 0, 99)
+  const newProperties: Partial<SlateElement> = {
+    indentation
+  }
+
+  Transforms.setNodes(editor, newProperties)
+}
+
+export function decreaseIndentation(editor: SlateEditorType) {
+  const currentIndentation = getIndentation(editor) || 0
+  const indentation = clamp(currentIndentation - INDENTATION_FACTOR, 0, 99)
+  const newProperties: Partial<SlateElement> = {
+    indentation: indentation === 0 ? null : indentation
+  }
+
+  Transforms.setNodes(editor, newProperties)
 }

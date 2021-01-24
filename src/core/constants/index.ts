@@ -26,3 +26,5 @@ export const ALIGNMENTS = {
   center: 'center',
   justify: 'justify'
 }
+
+export const INDENTATION_FACTOR = 3
