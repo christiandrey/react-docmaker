@@ -5,7 +5,8 @@ import {
   getAlignment,
   getColorMark,
   HeadingFormatType,
-  isBlockActive
+  isBlockActive,
+  SlateEditorType
 } from '../tools'
 
 type PopupActions = {
@@ -49,8 +50,12 @@ export function usePopupUtils(initialOpen: boolean = false): PopupActions {
   return popupActions
 }
 
+export function useEditor(): SlateEditorType {
+  return useSlate() as SlateEditorType
+}
+
 export function useTextSizeValue(): TextSizeValue {
-  const editor = useSlate()
+  const editor = useEditor()
 
   const headingOneActive = isBlockActive(editor, 'heading-one')
   const headingTwoActive = isBlockActive(editor, 'heading-two')
@@ -70,12 +75,12 @@ export function useTextSizeValue(): TextSizeValue {
 }
 
 export function useLeafColorValue(): string {
-  const editor = useSlate()
+  const editor = useEditor()
   return getColorMark(editor)
 }
 
 export function useAlignmentValue(): BlockAlignment {
-  const editor = useSlate()
+  const editor = useEditor()
   return getAlignment(editor)
 }
 
@@ -87,4 +92,14 @@ export function useMouseDown(fn: Fn): (e: MouseEvent) => void {
     },
     [fn]
   )
+}
+
+export function useCanUndo(): boolean {
+  const editor = useEditor()
+  return !!editor.history?.undos?.length
+}
+
+export function useCanRedo(): boolean {
+  const editor = useEditor()
+  return !!editor.history?.redos?.length
 }

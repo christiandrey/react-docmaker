@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import { CSSProperties } from 'react'
 import { areEqualColors, clamp, notNil } from '../utils'
 import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
+import { HistoryEditor } from 'slate-history'
 
 export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
 
@@ -26,7 +27,7 @@ export type ElementFormatType =
   | ListFormatType
   | QuoteFormatType
 
-export type SlateEditorType = Editor & ReactEditor
+export type SlateEditorType = ReactEditor & HistoryEditor
 
 export function isBlockActive(
   editor: SlateEditorType,
@@ -147,7 +148,7 @@ export function setBlockInactive(editor: SlateEditorType) {
 }
 
 export function focusEditor(editor: SlateEditorType) {
-  ReactEditor.focus(editor)
+  ReactEditor.focus(editor as ReactEditor)
 }
 
 export function composeWithClassName(attributes: any, className?: string) {

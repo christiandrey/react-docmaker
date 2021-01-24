@@ -27,7 +27,10 @@ import {
   useLeafColorValue,
   useMouseDown,
   usePopupUtils,
-  useAlignmentValue
+  useAlignmentValue,
+  useEditor,
+  useCanUndo,
+  useCanRedo
 } from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
@@ -46,12 +49,12 @@ import {
   toggleMarkActive
 } from '../../core/tools'
 import { nil, notNil } from '../../core/utils'
-import { useSlate } from 'slate-react'
 import { Transforms } from 'slate'
 import { ALIGNMENTS } from '../../core/constants'
+import { HistoryEditor } from 'slate-history'
 
 const Toolbar: FC = () => {
-  const editor = useSlate()
+  const editor = useEditor()
   const editorSelection = useRef(editor.selection)
 
   const textSizePopupAnchorRef = useRef(null)
@@ -63,6 +66,8 @@ const Toolbar: FC = () => {
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
   const alignmentValue = useAlignmentValue()
+  const canUndo = useCanUndo()
+  const canRedo = useCanRedo()
 
   const handleChangeTextSizeOption = useCallback(
     (value: HeadingFormatType) => {
@@ -151,6 +156,14 @@ const Toolbar: FC = () => {
 
   const handlePressBulletedList = useCallback(() => {
     toggleBlockActive(editor, 'bulleted-list')
+  }, [editor])
+
+  const handlePressUndo = useCallback(() => {
+    HistoryEditor.undo(editor)
+  }, [editor])
+
+  const handlePressRedo = useCallback(() => {
+    HistoryEditor.redo(editor)
   }, [editor])
 
   return (
@@ -279,10 +292,10 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton>
+          <IconButton onPress={handlePressUndo} disabled={!canUndo}>
             <GrUndo />
           </IconButton>
-          <IconButton>
+          <IconButton onPress={handlePressRedo} disabled={!canRedo}>
             <GrRedo />
           </IconButton>
         </IconGroup>
