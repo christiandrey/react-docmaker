@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+import React, { FC, PropsWithChildren, useEffect } from 'react'
 import { useFocused, useSelected } from 'slate-react'
 import classnames from 'classnames'
 import {
@@ -20,6 +20,13 @@ const EditableElement: FC<EditableElementProps> = ({
 }) => {
   const selected = useSelected()
   const focused = useFocused()
+
+  useEffect(() => {
+    return () => {
+      // TODO: Find refs that match unset ref value
+    }
+  }, [])
+
   return (
     <span
       {...composeWithStyle(

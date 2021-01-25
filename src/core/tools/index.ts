@@ -1,4 +1,4 @@
-import { Editor, Element as SlateElement, Transforms } from 'slate'
+import { Editor, Element as SlateElement, Node, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
 import { CSSProperties } from 'react'
@@ -372,7 +372,8 @@ export function getEditableAttributes(
 
 export function getEditableAttributesValidity(
   attributes: EditableAttributes,
-  showTip = false
+  showTip = false,
+  copyExisting = false
 ): boolean {
   const {
     dataType,
@@ -384,15 +385,16 @@ export function getEditableAttributesValidity(
     valueRef
   } = attributes
 
-  if (!dataType?.length || !defaultValue.length || (showTip && !tip.length)) {
-    return false
+  if (copyExisting) {
+    return !!valueRef?.length && !!defaultValue?.length
   }
 
-  if (valueRef) {
-    return true
-  }
-
-  if (!label.length) {
+  if (
+    !dataType?.length ||
+    !defaultValue?.length ||
+    !label?.length ||
+    (showTip && !tip.length)
+  ) {
     return false
   }
 
@@ -405,4 +407,24 @@ export function getEditableAttributesValidity(
   }
 
   return true
+}
+
+export function getMatchingNodes(
+  node: Node,
+  match: (node: Node) => boolean = () => true,
+  matching: Array<Node> = []
+) {
+  if (match(node)) {
+    matching.push(node)
+  }
+
+  const children = node.children as Array<Node>
+
+  if (children?.length) {
+    for (const child of children) {
+      getMatchingNodes(child, match, matching)
+    }
+  }
+
+  return matching
 }

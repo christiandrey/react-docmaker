@@ -22,6 +22,7 @@ const EditablePopupProps: FC<EditablePopupProps> = ({
     (attributes: EditableAttributes) => {
       onSubmit?.(attributes)
       onRequestClose?.()
+      setSegment(0)
     },
     [onRequestClose, onSubmit]
   )
@@ -45,7 +46,7 @@ const EditablePopupProps: FC<EditablePopupProps> = ({
           />
         </div>
         {segment === 0 && <EditableCreateNew onSubmit={handleSubmit} />}
-        {segment === 1 && <EditableCopyExisting />}
+        {segment === 1 && <EditableCopyExisting onSubmit={handleSubmit} />}
       </div>
     </Popup>
   )

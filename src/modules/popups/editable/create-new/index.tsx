@@ -67,18 +67,6 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
     [dataType, dateTimeFormat, defaultValue, label, options, showTip, tip]
   )
 
-  // const resetState = useCallback(() => {
-  //   setDataType('' as EditableDataType)
-  //   setDefaultValue('')
-  //   setDateTimeFormat('')
-  //   setLabel('')
-  //   setMultiline(false)
-  //   setOptions([])
-  //   setEditingOption('')
-  //   setShowTip(false)
-  //   setTip('')
-  // }, [])
-
   const handlePressDeleteOption = useCallback(
     (id: string) => {
       const eventualValue = [...options]
