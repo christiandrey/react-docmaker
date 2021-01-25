@@ -7,6 +7,7 @@ import {
   composeWithStyle,
   getIndentationPercent
 } from '../../core/tools'
+import EditableElement from '../elements/editable'
 
 export type ElementType =
   | 'quote'
@@ -22,6 +23,7 @@ export type ElementType =
   | 'numbered-list'
   | 'link'
   | 'image'
+  | 'editable'
 
 type TemplateElementType = {
   type: ElementType
@@ -142,6 +144,8 @@ const TemplateElement: FC<TemplateElementProps> = ({
       )
     case 'image':
       return <ImageElement {...{ attributes, children, element }} />
+    case 'editable':
+      return <EditableElement {...{ attributes, children, element }} />
   }
 }
 

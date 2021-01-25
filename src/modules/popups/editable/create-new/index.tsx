@@ -14,6 +14,7 @@ import { FaRegTrashAlt } from 'react-icons/fa'
 import { AiFillPlusCircle } from 'react-icons/ai'
 import Icon from '../../../icon'
 import {
+  EditableAttributes,
   EditableDataType,
   EditableOption,
   getEditableAttributes,
@@ -26,9 +27,11 @@ import {
 } from '../../../../core/constants'
 import { formatDate, generateUUID } from '../../../../core/utils'
 
-type EditableCreateNewProps = {}
+type EditableCreateNewProps = {
+  onSubmit?: (attributes: EditableAttributes) => void
+}
 
-const EditableCreateNew: FC<EditableCreateNewProps> = () => {
+const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
   const now = useRef(new Date()).current
   const dataTypeOptions = useRef(Object.entries(EDITABLE_DATA_TYPES)).current
   const dateFormatOptions = useRef(DATE_FORMATS.map((o) => formatDate(now, o)))
@@ -64,17 +67,17 @@ const EditableCreateNew: FC<EditableCreateNewProps> = () => {
     [dataType, dateTimeFormat, defaultValue, label, options, showTip, tip]
   )
 
-  const resetState = useCallback(() => {
-    setDataType('' as EditableDataType)
-    setDefaultValue('')
-    setDateTimeFormat('')
-    setLabel('')
-    setMultiline(false)
-    setOptions([])
-    setEditingOption('')
-    setShowTip(false)
-    setTip('')
-  }, [])
+  // const resetState = useCallback(() => {
+  //   setDataType('' as EditableDataType)
+  //   setDefaultValue('')
+  //   setDateTimeFormat('')
+  //   setLabel('')
+  //   setMultiline(false)
+  //   setOptions([])
+  //   setEditingOption('')
+  //   setShowTip(false)
+  //   setTip('')
+  // }, [])
 
   const handlePressDeleteOption = useCallback(
     (id: string) => {
@@ -126,16 +129,15 @@ const EditableCreateNew: FC<EditableCreateNewProps> = () => {
       showTip
     )
 
-    console.log(data)
-    console.log(resetState)
+    onSubmit?.(data)
   }, [
     dataType,
     dateTimeFormat,
     defaultValue,
     label,
     multiline,
+    onSubmit,
     options,
-    resetState,
     showTip,
     tip
   ])

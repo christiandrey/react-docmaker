@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
+import { EditableAttributes } from '../../../core/tools'
 import Popup from '../../popup'
 import SegmentedControl from '../../segmented-control'
 import EditableCopyExisting from './copy-existing'
@@ -7,13 +8,23 @@ import EditableCreateNew from './create-new'
 type EditablePopupProps = {
   isVisible: boolean
   onRequestClose: Fn
+  onSubmit: (attributes: EditableAttributes) => void
 }
 
 const EditablePopupProps: FC<EditablePopupProps> = ({
   isVisible,
-  onRequestClose
+  onRequestClose,
+  onSubmit
 }) => {
   const [segment, setSegment] = useState(0)
+
+  const handleSubmit = useCallback(
+    (attributes: EditableAttributes) => {
+      onSubmit?.(attributes)
+      onRequestClose?.()
+    },
+    [onRequestClose, onSubmit]
+  )
 
   return (
     <Popup
@@ -33,7 +44,7 @@ const EditablePopupProps: FC<EditablePopupProps> = ({
             options={['Create new', 'Copy existing']}
           />
         </div>
-        {segment === 0 && <EditableCreateNew />}
+        {segment === 0 && <EditableCreateNew onSubmit={handleSubmit} />}
         {segment === 1 && <EditableCopyExisting />}
       </div>
     </Popup>

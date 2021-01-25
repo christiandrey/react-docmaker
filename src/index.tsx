@@ -20,6 +20,7 @@ import TemplateLeaf from './modules/template-leaf'
 import { HOT_KEYS } from './core/constants'
 import isHotkey from 'is-hotkey'
 import { SlateEditorType, toggleMarkActive } from './core/tools'
+import { withEditable } from './core/plugins/editable'
 
 interface Props {
   className?: string
@@ -27,7 +28,7 @@ interface Props {
 
 export const DocmakerEditor = ({ className }: Props) => {
   const editor = useMemo(
-    () => withHTML(withReact(withHistory(createEditor()))),
+    () => withEditable(withHTML(withReact(withHistory(createEditor())))),
     []
   )
   const createdAt = useRef(new Date().toISOString()).current

@@ -37,9 +37,11 @@ import ColorPopup from '../popups/color'
 import {
   BlockAlignment,
   decreaseIndentation,
+  EditableAttributes,
   focusEditor,
   HeadingFormatType,
   increaseIndentation,
+  insertEditableBlock,
   insertImageBlock,
   isBlockActive,
   isMarkActive,
@@ -147,6 +149,18 @@ const Toolbar: FC = () => {
       }
 
       insertImageBlock(editor, { dimensions: value }, true)
+      focusEditor(editor)
+    },
+    [editor]
+  )
+
+  const handleCreateEditable = useCallback(
+    (value: EditableAttributes) => {
+      if (notNil(editorSelection.current)) {
+        Transforms.select(editor, editorSelection.current)
+      }
+
+      insertEditableBlock(editor, value)
       focusEditor(editor)
     },
     [editor]
@@ -390,6 +404,7 @@ const Toolbar: FC = () => {
       <EditablePopupProps
         isVisible={editablePopup.visible}
         onRequestClose={editablePopup.close}
+        onSubmit={handleCreateEditable}
       />
     </Fragment>
   )

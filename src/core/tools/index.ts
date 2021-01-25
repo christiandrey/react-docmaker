@@ -308,6 +308,22 @@ export function insertImageBlock(
   Transforms.move(editor)
 }
 
+export function insertEditableBlock(
+  editor: SlateEditorType,
+  attributes: EditableAttributes
+) {
+  let editableNode: SlateElement & EditableAttributes = {
+    type: 'editable',
+    ...attributes,
+    children: [{ text: '' }]
+  }
+
+  editableNode = composeWithEditable(editableNode)
+
+  Transforms.insertNodes(editor, editableNode)
+  Transforms.move(editor)
+}
+
 export function getEditableAttributes(
   attributes: EditableAttributes,
   showTip = false

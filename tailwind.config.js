@@ -30,7 +30,6 @@ boxShadow[6] = `0 2.8px 2.2px rgba(0, 0, 0, 0.02),
 
 const fontFamily = {
   sans: [
-    'IBM Plex Sans',
     'system-ui',
     '-apple-system',
     'BlinkMacSystemFont',
