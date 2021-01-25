@@ -1,12 +1,14 @@
-import React, { FC, PropsWithChildren } from 'react'
+import React, { FC, PropsWithChildren, useMemo } from 'react'
 import { useFocused, useSelected } from 'slate-react'
 import classnames from 'classnames'
+import { EditableElementType } from '../../../core/tools'
+import { getPlaceholderImage } from '../../../core/utils'
 
-export type ImageElementType = {
+export type ImageElementType = EditableElementType<{
   url: string
   width?: number
   height?: number
-}
+}>
 
 type ImageElementProps = PropsWithChildren<{
   attributes: any
@@ -20,12 +22,19 @@ const ImageElement: FC<ImageElementProps> = ({
 }) => {
   const selected = useSelected()
   const focused = useFocused()
+  const url = useMemo(
+    () =>
+      element.editable
+        ? getPlaceholderImage(element.width, element.height)
+        : element.url,
+    [element.editable, element.height, element.url, element.width]
+  )
 
   return (
     <span {...attributes}>
       {children}
       <img
-        src={element.url}
+        src={url}
         style={{ width: element.width, height: element.height }}
         className={classnames(
           'inline-block max-w-full rounded-default align-bottom',

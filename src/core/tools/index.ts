@@ -2,7 +2,7 @@ import { Editor, Element as SlateElement, Transforms } from 'slate'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
 import { CSSProperties } from 'react'
-import { areEqualColors, clamp, notNil } from '../utils'
+import { areEqualColors, clamp, generateUUID, nil, notNil } from '../utils'
 import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
 import { HistoryEditor } from 'slate-history'
 import { ImageProps } from '../../modules/popups/image'
@@ -30,6 +30,29 @@ export type ElementFormatType =
   | QuoteFormatType
 
 export type SlateEditorType = Editor & ReactEditor & HistoryEditor
+
+export type EditableElementType<T> = {
+  id?: string
+  editable?: true
+} & T
+
+export type EditableDataType = 'text' | 'options' | 'radio' | 'time' | 'date'
+
+export type EditableOption = {
+  id: string
+  label: string
+}
+
+export type EditableAttributes = Partial<{
+  dataType: EditableDataType
+  dateTimeFormat: string
+  defaultValue: string
+  label: string
+  multiline: boolean
+  options: Array<EditableOption>
+  tip: string
+  valueRef: string
+}>
 
 export function isBlockActive(
   editor: SlateEditorType,
@@ -245,16 +268,31 @@ export function decreaseIndentation(editor: SlateEditorType) {
   Transforms.setNodes(editor, newProperties)
 }
 
+export function composeWithEditable<T extends object>(
+  attributes: T
+): EditableElementType<T> {
+  if (nil(attributes)) {
+    return null
+  }
+
+  return {
+    ...attributes,
+    editable: true,
+    id: generateUUID()
+  }
+}
+
 export function insertImageBlock(
   editor: SlateEditorType,
-  attributes: ImageProps
+  attributes: ImageProps,
+  editable?: boolean
 ) {
   const {
     url,
     dimensions: { width, height }
   } = attributes
 
-  const imageNode: SlateElement & ImageElementType = {
+  let imageNode: SlateElement & ImageElementType = {
     type: 'image',
     url,
     width,
@@ -262,6 +300,93 @@ export function insertImageBlock(
     children: [{ text: '' }]
   }
 
+  if (editable) {
+    imageNode = composeWithEditable(imageNode)
+  }
+
   Transforms.insertNodes(editor, imageNode)
   Transforms.move(editor)
+}
+
+export function getEditableAttributes(
+  attributes: EditableAttributes,
+  showTip = false
+) {
+  const {
+    dataType,
+    dateTimeFormat,
+    multiline,
+    defaultValue,
+    label,
+    options,
+    tip,
+    valueRef
+  } = attributes
+
+  const parsedAttributes = {
+    dataType,
+    defaultValue
+  } as EditableAttributes
+
+  if (valueRef?.length) {
+    parsedAttributes.valueRef = valueRef
+    return parsedAttributes
+  }
+
+  if (showTip) {
+    parsedAttributes.tip = tip
+  }
+
+  if (dataType === 'text' && multiline) {
+    parsedAttributes.multiline = multiline
+  }
+
+  if (['options', 'radio'].includes(dataType)) {
+    parsedAttributes.options = options
+  }
+
+  if (['date', 'time'].includes(dataType)) {
+    parsedAttributes.dateTimeFormat = dateTimeFormat
+  }
+
+  parsedAttributes.label = label
+
+  return parsedAttributes
+}
+
+export function getEditableAttributesValidity(
+  attributes: EditableAttributes,
+  showTip = false
+): boolean {
+  const {
+    dataType,
+    dateTimeFormat,
+    defaultValue,
+    label,
+    options,
+    tip,
+    valueRef
+  } = attributes
+
+  if (!dataType?.length || !defaultValue.length || (showTip && !tip.length)) {
+    return false
+  }
+
+  if (valueRef) {
+    return true
+  }
+
+  if (!label.length) {
+    return false
+  }
+
+  if (['options', 'radio'].includes(dataType)) {
+    return !!options?.length
+  }
+
+  if (['date', 'time'].includes(dataType)) {
+    return !!dateTimeFormat?.length
+  }
+
+  return true
 }

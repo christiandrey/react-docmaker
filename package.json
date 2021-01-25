@@ -72,9 +72,11 @@
     "is-hotkey": "0.2.0",
     "react-contenteditable": "3.3.5",
     "react-icons": "4.1.0",
+    "react-switch": "6.0.0",
     "slate": "0.59.0",
     "slate-history": "0.59.0",
     "slate-hyperscript": "0.59.0",
-    "slate-react": "0.59.0"
+    "slate-react": "0.59.0",
+    "uuid": "8.3.2"
   }
 }

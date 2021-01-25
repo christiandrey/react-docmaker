@@ -28,3 +28,25 @@ export const ALIGNMENTS = {
 }
 
 export const INDENTATION_FACTOR = 3
+
+export const EDITABLE_DATA_TYPES = {
+  text: 'Text',
+  options: 'Dropdown',
+  radio: 'Radio',
+  date: 'Date',
+  time: 'Time'
+}
+
+export const DATE_FORMATS = [
+  'do MMMM, yyyy',
+  'dd MMMM, yyyy',
+  'MMMM dd, yyyy',
+  'dd/MM/yyyy',
+  'MM/dd/yyyy',
+  'MMM d, yyyy',
+  'dd MMM, yy',
+  'dd-MM-yyyy',
+  'dd-MM-yy'
+]
+
+export const TIME_FORMATS = ['hh:mm a', 'hh:mm aaaa', 'HH:mm']

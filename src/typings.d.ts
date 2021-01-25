@@ -18,5 +18,3 @@ declare module '*.svg' {
 }
 
 type Fn<T = any> = (...args: any[]) => T
-
-type ValidDate = Date | string | number

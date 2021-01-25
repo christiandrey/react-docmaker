@@ -49,11 +49,13 @@ import {
   toggleColorMarkActive,
   toggleMarkActive
 } from '../../core/tools'
-import { nil, notNil } from '../../core/utils'
+import { ImageDimensions, nil, notNil } from '../../core/utils'
 import { Transforms } from 'slate'
 import { ALIGNMENTS } from '../../core/constants'
 import { HistoryEditor } from 'slate-history'
 import ImagePopup, { ImageProps } from '../popups/image'
+import ImageSizePopup from '../popups/image-size'
+import EditablePopupProps from '../popups/editable'
 
 const Toolbar: FC = () => {
   const editor = useEditor()
@@ -62,10 +64,13 @@ const Toolbar: FC = () => {
   const textSizePopupAnchorRef = useRef(null)
   const colorPopupAnchorRef = useRef(null)
   const imagePopupAnchorRef = useRef(null)
+  const imageSizePopupAnchorRef = useRef(null)
 
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
   const imagePopup = usePopupUtils()
+  const imageSizePopup = usePopupUtils()
+  const editablePopup = usePopupUtils()
 
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
@@ -135,6 +140,18 @@ const Toolbar: FC = () => {
     [editor]
   )
 
+  const handleCreateEditableImage = useCallback(
+    (value: ImageDimensions) => {
+      if (notNil(editorSelection.current)) {
+        Transforms.select(editor, editorSelection.current)
+      }
+
+      insertImageBlock(editor, { dimensions: value }, true)
+      focusEditor(editor)
+    },
+    [editor]
+  )
+
   const handlePressTextSize = useMouseDown(() => {
     textSizePopup.open()
   })
@@ -147,6 +164,16 @@ const Toolbar: FC = () => {
   const handlePressImage = useMouseDown(() => {
     editorSelection.current = editor.selection
     imagePopup.open()
+  })
+
+  const handlePressEditableImage = useMouseDown(() => {
+    editorSelection.current = editor.selection
+    imageSizePopup.open()
+  })
+
+  const handlePressInsertEditable = useMouseDown(() => {
+    editorSelection.current = editor.selection
+    editablePopup.open()
   })
 
   const handlePressInlineFormat = useCallback(
@@ -306,10 +333,19 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton className='border border-dotted border-gray-500'>
+          <IconButton
+            ref={imageSizePopupAnchorRef}
+            active={imageSizePopup.visible}
+            onPress={handlePressEditableImage}
+            className='border border-dotted border-gray-500'
+          >
             <RiImageEditFill />
           </IconButton>
-          <IconButton className='border border-dotted border-gray-500'>
+          <IconButton
+            active={editablePopup.visible}
+            className='border border-dotted border-gray-500'
+            onPress={handlePressInsertEditable}
+          >
             <MdTextFields />
           </IconButton>
           <IconButton className='border border-dotted border-gray-500'>
@@ -344,6 +380,16 @@ const Toolbar: FC = () => {
         isVisible={imagePopup.visible}
         onRequestClose={imagePopup.close}
         onSubmitEditing={handleCreateImage}
+      />
+      <ImageSizePopup
+        anchorRef={imageSizePopupAnchorRef}
+        isVisible={imageSizePopup.visible}
+        onRequestClose={imageSizePopup.close}
+        onSubmitEditing={handleCreateEditableImage}
+      />
+      <EditablePopupProps
+        isVisible={editablePopup.visible}
+        onRequestClose={editablePopup.close}
       />
     </Fragment>
   )

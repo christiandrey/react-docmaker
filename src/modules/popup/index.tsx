@@ -294,7 +294,7 @@ const Popup: React.FC<PopupProps> = ({
         className={
           transparent
             ? 'w-full h-full absolute top-0 left-0 z-0'
-            : 'w-full h-full absolute top-0 left-0 z-0 bg-indigo-800 opacity-50'
+            : 'w-full h-full absolute top-0 left-0 z-0 bg-blue-800 opacity-50'
         }
         onMouseDown={handleClickOverlay}
       />

@@ -13,7 +13,7 @@ import Button from '../../button'
 import { getImageSizeAsync, ImageDimensions, nil } from '../../../core/utils'
 
 export type ImageProps = {
-  url: string
+  url?: string
   dimensions: ImageDimensions
 }
 
