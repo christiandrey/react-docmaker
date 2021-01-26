@@ -37,7 +37,13 @@ export type EditableElementType<T> = {
   editable?: true
 } & T
 
-export type EditableDataType = 'text' | 'options' | 'radio' | 'time' | 'date'
+export type EditableDataType =
+  | 'text'
+  | 'options'
+  | 'radio'
+  | 'time'
+  | 'date'
+  | 'image'
 
 export type EditableOption = {
   id: string
@@ -452,6 +458,8 @@ export function insertImageBlock(
   }
 
   if (editable) {
+    imageNode.type = 'editable'
+    imageNode.dataType = 'image'
     imageNode = composeWithEditable(imageNode)
   }
 
