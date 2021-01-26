@@ -8,7 +8,7 @@ import React, {
 import { ImageDimensions, notNil, parseNumber } from '../../../core/utils'
 import Button from '../../button'
 import Popup from '../../popup'
-import { TiTimes } from 'react-icons/ti'
+import { TiTimes } from '@react-icons/all-files/ti/TiTimes'
 import Icon from '../../icon'
 
 type ImageSizePopupProps = {

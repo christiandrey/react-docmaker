@@ -10,8 +10,8 @@ import React, {
 import Button from '../../../button'
 import Field from '../../../field'
 import Switch from '../../../switch'
-import { FaRegTrashAlt } from 'react-icons/fa'
-import { AiFillPlusCircle } from 'react-icons/ai'
+import { FaRegTrashAlt } from '@react-icons/all-files/fa/FaRegTrashAlt'
+import { AiFillPlusCircle } from '@react-icons/all-files/ai/AiFillPlusCircle'
 import Icon from '../../../icon'
 import {
   EditableAttributes,
