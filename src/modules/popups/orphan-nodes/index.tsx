@@ -1,9 +1,9 @@
 import React, { FC, MutableRefObject, useCallback } from 'react'
-import { FiInbox } from 'react-icons/fi'
+import { FiInbox } from '@react-icons/all-files/fi/FiInbox'
 import { useOrphanNodes } from '../../../core/hooks'
 import Icon from '../../icon'
 import Popup from '../../popup'
-import { FaRegTrashAlt } from 'react-icons/fa'
+import { FaRegTrashAlt } from '@react-icons/all-files/fa/FaRegTrashAlt'
 
 type OrphanNodesPopupProps = {
   anchorRef: MutableRefObject<Element>

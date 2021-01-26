@@ -1,26 +1,26 @@
 import React, { FC, useRef, Fragment, useCallback } from 'react'
 import IconButton from '../icon-button'
-import { RiImage2Fill, RiImageEditFill } from 'react-icons/ri'
+import { RiImage2Fill } from '@react-icons/all-files/ri/RiImage2Fill'
+import { RiImageEditFill } from '@react-icons/all-files/ri/RiImageEditFill'
 import classnames from 'classnames'
-import { GrRedo, GrUndo } from 'react-icons/gr'
-import {
-  MdFormatAlignCenter,
-  MdFormatAlignJustify,
-  MdFormatAlignLeft,
-  MdFormatAlignRight,
-  MdFormatBold,
-  MdFormatIndentDecrease,
-  MdFormatIndentIncrease,
-  MdFormatItalic,
-  MdFormatListBulleted,
-  MdFormatListNumbered,
-  MdFormatSize,
-  MdFormatStrikethrough,
-  MdFormatUnderlined,
-  MdTextFields,
-  MdTransform
-} from 'react-icons/md'
-import { FiInbox } from 'react-icons/fi'
+import { GrUndo } from '@react-icons/all-files/gr/GrUndo'
+import { GrRedo } from '@react-icons/all-files/gr/GrRedo'
+import { MdFormatAlignCenter } from '@react-icons/all-files/md/MdFormatAlignCenter'
+import { MdFormatAlignJustify } from '@react-icons/all-files/md/MdFormatAlignJustify'
+import { MdFormatAlignLeft } from '@react-icons/all-files/md/MdFormatAlignLeft'
+import { MdFormatAlignRight } from '@react-icons/all-files/md/MdFormatAlignRight'
+import { MdFormatBold } from '@react-icons/all-files/md/MdFormatBold'
+import { MdFormatIndentDecrease } from '@react-icons/all-files/md/MdFormatIndentDecrease'
+import { MdFormatIndentIncrease } from '@react-icons/all-files/md/MdFormatIndentIncrease'
+import { MdFormatItalic } from '@react-icons/all-files/md/MdFormatItalic'
+import { MdFormatListBulleted } from '@react-icons/all-files/md/MdFormatListBulleted'
+import { MdFormatListNumbered } from '@react-icons/all-files/md/MdFormatListNumbered'
+import { MdFormatSize } from '@react-icons/all-files/md/MdFormatSize'
+import { MdFormatStrikethrough } from '@react-icons/all-files/md/MdFormatStrikethrough'
+import { MdFormatUnderlined } from '@react-icons/all-files/md/MdFormatUnderlined'
+import { MdTextFields } from '@react-icons/all-files/md/MdTextFields'
+import { MdTransform } from '@react-icons/all-files/md/MdTransform'
+import { FiInbox } from '@react-icons/all-files/fi/FiInbox'
 import Icon from '../icon'
 import IconGroup from '../icon-group'
 import {

@@ -7,7 +7,7 @@ import React, {
   useState
 } from 'react'
 import Popup from '../../popup'
-import { BiLink } from 'react-icons/bi'
+import { BiLink } from '@react-icons/all-files/bi/BiLink'
 import Icon from '../../icon'
 import Button from '../../button'
 import { getImageSizeAsync, ImageDimensions, nil } from '../../../core/utils'
