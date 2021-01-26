@@ -141,7 +141,7 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
       setDataType(value)
 
       if (value === 'date' || value === 'time') {
-        setDateTimeFormat(null)
+        setDateTimeFormat('')
       }
     },
     [dataType]

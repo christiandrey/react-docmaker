@@ -17,6 +17,7 @@ export type LeafFormatType =
   | 'underline'
   | 'strikethrough'
   | 'color'
+  | 'ref'
 
 export type HeadingFormatType = 'heading-one' | 'heading-two' | 'heading-three'
 
@@ -43,6 +44,11 @@ export type EditableOption = {
   label: string
 }
 
+export type EditableRefAttributes = {
+  parent: string
+  value: string
+}
+
 export type EditableAttributes = Partial<{
   dataType: EditableDataType
   dateTimeFormat: string
@@ -52,6 +58,7 @@ export type EditableAttributes = Partial<{
   options: Array<EditableOption>
   tip: string
   valueRef: string
+  ref: EditableRefAttributes
 }>
 
 export function isBlockActive(
@@ -72,7 +79,12 @@ export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
   }
 
   const marks = Editor.marks(editor)
-  return marks ? marks[format] === true : false
+
+  if (notNil(marks)) {
+    return format === 'ref' ? notNil(marks[format]) : marks[format] === true
+  }
+
+  return false
 }
 
 export function isColorMarkActive(editor: SlateEditorType) {
@@ -427,4 +439,36 @@ export function getMatchingNodes(
   }
 
   return matching
+}
+
+export function getMatchingNodesInSelection(
+  node: SlateEditorType,
+  match: (node: Node) => boolean = () => true
+) {
+  const generator = Editor.nodes(node, {
+    match
+  })
+
+  return Array.from(generator).map((o) => o[0])
+}
+
+export function setConditionActive(
+  editor: SlateEditorType,
+  condition: EditableRefAttributes
+) {
+  Editor.addMark(editor, 'ref', condition)
+  Transforms.setNodes(
+    editor,
+    { ref: condition },
+    {
+      match: (o) => Editor.isVoid(editor, o) && o.type === 'editable'
+    }
+  )
+}
+
+export function unsetConditionActive(editor: SlateEditorType) {
+  Editor.removeMark(editor, 'ref')
+  Transforms.unsetNodes(editor, 'ref', {
+    match: (o) => Editor.isVoid(editor, o) && o.type === 'editable'
+  })
 }

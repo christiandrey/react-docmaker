@@ -6,6 +6,7 @@ import {
   getColorMark,
   HeadingFormatType,
   isBlockActive,
+  isMarkActive,
   SlateEditorType
 } from '../tools'
 
@@ -102,4 +103,9 @@ export function useCanUndo(): boolean {
 export function useCanRedo(): boolean {
   const editor = useEditor()
   return !!editor.history?.redos?.length
+}
+
+export function useConditionActive(): boolean {
+  const editor = useEditor()
+  return isMarkActive(editor, 'ref')
 }

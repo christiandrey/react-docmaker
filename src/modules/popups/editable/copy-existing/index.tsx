@@ -18,9 +18,10 @@ const EditableCopyExisting: FC<EditableCopyExistingProps> = ({ onSubmit }) => {
   const editor = useEditor()
   const editableNodes = useMemo(
     () =>
-      getMatchingNodes(editor, (o) => o.type === 'editable').map(
-        (o) => o as EditableElementType<EditableAttributes>
-      ),
+      getMatchingNodes(
+        editor,
+        (o) => o.type === 'editable' && !(o.valueRef as string)?.length
+      ).map((o) => o as EditableElementType<EditableAttributes>),
     [editor]
   )
 

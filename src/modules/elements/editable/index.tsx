@@ -39,7 +39,7 @@ const EditableElement: FC<EditableElementProps> = ({
             }
           )
         ),
-        { fontSize: '0.85em' }
+        { fontSize: '0.82em' }
       )}
       contentEditable={false}
     >

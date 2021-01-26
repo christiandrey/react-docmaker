@@ -5,6 +5,8 @@ import {
   composeWithAlignmentClassName,
   composeWithClassName,
   composeWithStyle,
+  EditableAttributes,
+  EditableElementType,
   getIndentationPercent
 } from '../../core/tools'
 import EditableElement from '../elements/editable'
@@ -29,7 +31,8 @@ type TemplateElementType = {
   type: ElementType
   alignment?: BlockAlignment
   indentation?: number
-} & ImageElementType
+} & ImageElementType &
+  EditableElementType<EditableAttributes>
 
 type TemplateElementProps = PropsWithChildren<{
   attributes: any

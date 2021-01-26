@@ -30,7 +30,8 @@ import {
   useAlignmentValue,
   useEditor,
   useCanUndo,
-  useCanRedo
+  useCanRedo,
+  useConditionActive
 } from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
@@ -38,6 +39,7 @@ import {
   BlockAlignment,
   decreaseIndentation,
   EditableAttributes,
+  EditableRefAttributes,
   focusEditor,
   HeadingFormatType,
   increaseIndentation,
@@ -47,9 +49,11 @@ import {
   isMarkActive,
   LeafFormatType,
   setAlignment,
+  setConditionActive,
   toggleBlockActive,
   toggleColorMarkActive,
-  toggleMarkActive
+  toggleMarkActive,
+  unsetConditionActive
 } from '../../core/tools'
 import { ImageDimensions, nil, notNil } from '../../core/utils'
 import { Transforms } from 'slate'
@@ -58,6 +62,7 @@ import { HistoryEditor } from 'slate-history'
 import ImagePopup, { ImageProps } from '../popups/image'
 import ImageSizePopup from '../popups/image-size'
 import EditablePopupProps from '../popups/editable'
+import ConditionPopup from '../popups/condition'
 
 const Toolbar: FC = () => {
   const editor = useEditor()
@@ -67,18 +72,21 @@ const Toolbar: FC = () => {
   const colorPopupAnchorRef = useRef(null)
   const imagePopupAnchorRef = useRef(null)
   const imageSizePopupAnchorRef = useRef(null)
+  const conditionPopupAnchorRef = useRef(null)
 
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
   const imagePopup = usePopupUtils()
   const imageSizePopup = usePopupUtils()
   const editablePopup = usePopupUtils()
+  const conditionPopup = usePopupUtils()
 
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
   const alignmentValue = useAlignmentValue()
   const canUndo = useCanUndo()
   const canRedo = useCanRedo()
+  const conditionActive = useConditionActive()
 
   const handleChangeTextSizeOption = useCallback(
     (value: HeadingFormatType) => {
@@ -166,6 +174,18 @@ const Toolbar: FC = () => {
     [editor]
   )
 
+  const handleSetConditionActive = useCallback(
+    (value: EditableRefAttributes) => {
+      if (notNil(editorSelection.current)) {
+        Transforms.select(editor, editorSelection.current)
+      }
+
+      setConditionActive(editor, value)
+      focusEditor(editor)
+    },
+    [editor]
+  )
+
   const handlePressTextSize = useMouseDown(() => {
     textSizePopup.open()
   })
@@ -188,6 +208,16 @@ const Toolbar: FC = () => {
   const handlePressInsertEditable = useMouseDown(() => {
     editorSelection.current = editor.selection
     editablePopup.open()
+  })
+
+  const handlePressCondition = useMouseDown(() => {
+    if (conditionActive) {
+      unsetConditionActive(editor)
+      return
+    }
+
+    editorSelection.current = editor.selection
+    conditionPopup.open()
   })
 
   const handlePressInlineFormat = useCallback(
@@ -362,7 +392,12 @@ const Toolbar: FC = () => {
           >
             <MdTextFields />
           </IconButton>
-          <IconButton className='border border-dotted border-gray-500'>
+          <IconButton
+            ref={conditionPopupAnchorRef}
+            active={conditionActive || conditionPopup.visible}
+            onPress={handlePressCondition}
+            className='border border-dotted border-gray-500'
+          >
             <MdTransform />
           </IconButton>
         </IconGroup>
@@ -405,6 +440,12 @@ const Toolbar: FC = () => {
         isVisible={editablePopup.visible}
         onRequestClose={editablePopup.close}
         onSubmit={handleCreateEditable}
+      />
+      <ConditionPopup
+        anchorRef={conditionPopupAnchorRef}
+        isVisible={conditionPopup.visible}
+        onRequestClose={conditionPopup.close}
+        onSubmitEditing={handleSetConditionActive}
       />
     </Fragment>
   )
