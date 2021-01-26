@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import formatRelative from 'date-fns/formatRelative'
 import { v4 as uuidv4 } from 'uuid'
 
