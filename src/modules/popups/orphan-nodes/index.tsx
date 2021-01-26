@@ -67,7 +67,7 @@ const OrphanNodesPopup: FC<OrphanNodesPopupProps> = ({
             >
               <div className='flex-1'>{defaultValue}</div>
               <Icon
-                onPress={(id) => handlePressDelete(id)}
+                onPress={() => handlePressDelete(id as any)}
                 className='cursor-pointer text-white opacity-50 transition-opacity duration-250 hover:opacity-100'
               >
                 <FaRegTrashAlt />
