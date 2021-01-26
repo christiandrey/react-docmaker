@@ -44,7 +44,7 @@ const TemplateElement: FC<TemplateElementProps> = ({
   children,
   element
 }) => {
-  const { type, url, alignment, indentation } = element
+  const { type, url, alignment, indentation, dataType } = element
 
   switch (type) {
     default:
@@ -148,7 +148,11 @@ const TemplateElement: FC<TemplateElementProps> = ({
     case 'image':
       return <ImageElement {...{ attributes, children, element }} />
     case 'editable':
-      return <EditableElement {...{ attributes, children, element }} />
+      return dataType === 'image' ? (
+        <ImageElement {...{ attributes, children, element }} />
+      ) : (
+        <EditableElement {...{ attributes, children, element }} />
+      )
   }
 }
 
