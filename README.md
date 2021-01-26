@@ -15,12 +15,12 @@ npm install --save react-docmaker
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-docmaker'
+import { DocmakerEditor } from 'react-docmaker'
 import 'react-docmaker/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <DocmakerEditor onSubmitChanges={console.log} />
   }
 }
 ```

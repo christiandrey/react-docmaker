@@ -1,0 +1,10 @@
+.color-box:focus,
+.color-box:hover,
+.color-box:active,
+.color-box.active {
+  box-shadow: 0px 0px 4px;
+}
+
+.input {
+  width: 96px;
+}

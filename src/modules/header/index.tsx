@@ -9,9 +9,15 @@ type HeaderProps = {
   title?: string
   createdAt?: string
   onChangeTitle?: (value: string) => void
+  onPressSave?: Fn
 }
 
-const Header: FC<HeaderProps> = ({ title, createdAt, onChangeTitle }) => {
+const Header: FC<HeaderProps> = ({
+  title,
+  createdAt,
+  onChangeTitle,
+  onPressSave
+}) => {
   const editorRef = useRef(null)
   const state = useRef(title)
 
@@ -48,7 +54,9 @@ const Header: FC<HeaderProps> = ({ title, createdAt, onChangeTitle }) => {
           </div>
         )}
       </div>
-      <Button>Save changes</Button>
+      <Button disabled={!state.current?.length} onPress={onPressSave}>
+        Save changes
+      </Button>
     </div>
   )
 }

@@ -1,19 +1,20 @@
 {
   "name": "react-docmaker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SlateJS based document template editor for React.",
   "author": "christiandrey",
   "license": "MIT",
   "repository": "christiandrey/react-docmaker",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
   "engines": {
     "node": ">=10"
   },
   "scripts": {
-    "build": "NODE_ENV=production microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
+    "build": "NODE_ENV=production microbundle-crl --compress --format modern,cjs --jsxFragment React.Fragment",
+    "start": "microbundle-crl watch --no-compress --format modern,cjs --jsxFragment React.Fragment",
     "prepare": "run-s build",
     "test": "run-s test:unit test:lint test:build",
     "test:build": "run-s build",
@@ -50,6 +51,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-standard": "^4.0.1",
     "gh-pages": "^2.2.0",
     "microbundle-crl": "^0.13.10",
@@ -68,7 +70,14 @@
   "dependencies": {
     "classnames": "2.2.6",
     "date-fns": "2.16.1",
+    "is-hotkey": "0.2.0",
     "react-contenteditable": "3.3.5",
-    "react-icons": "4.1.0"
+    "react-icons": "4.1.0",
+    "react-switch": "6.0.0",
+    "slate": "0.59.0",
+    "slate-history": "0.59.0",
+    "slate-hyperscript": "0.59.0",
+    "slate-react": "0.59.0",
+    "uuid": "8.3.2"
   }
 }
