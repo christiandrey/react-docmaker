@@ -21,6 +21,7 @@ import { HOT_KEYS } from './core/constants'
 import isHotkey from 'is-hotkey'
 import { SlateEditorType, toggleMarkActive } from './core/tools'
 import { withEditable } from './core/plugins/editable'
+import OrphanNodesContext from './core/contexts/orphan-nodes'
 
 interface Props {
   className?: string
@@ -34,6 +35,7 @@ export const DocmakerEditor = ({ className }: Props) => {
   const createdAt = useRef(new Date().toISOString()).current
 
   const [title, setTitle] = useState('')
+  const [orphanNodes, setOrphanNodes] = useState<Array<Node>>([])
   const [editorState, setEditorState] = useState<Array<Node>>([
     {
       type: 'paragraph',
@@ -65,32 +67,35 @@ export const DocmakerEditor = ({ className }: Props) => {
     console.log({
       title: stripHTMLEntities(title),
       createdAt,
-      template: editorState
+      template: editorState,
+      orphans: orphanNodes
     })
-  }, [title, createdAt, editorState])
+  }, [title, createdAt, editorState, orphanNodes])
 
   return (
     <div className={classnames('font-sans', className)}>
-      <Slate editor={editor} value={editorState} onChange={setEditorState}>
-        <div className='sticky top-0'>
-          <Header
-            title={title}
-            createdAt={createdAt}
-            onChangeTitle={setTitle}
-            onPressSave={handlePressSave}
-          />
-          <Toolbar />
-        </div>
-        <TemplateEditor>
-          <Editable
-            spellCheck
-            placeholder='Start typing...'
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            onKeyDown={handleEditorKeydown}
-          />
-        </TemplateEditor>
-      </Slate>
+      <OrphanNodesContext.Provider value={[orphanNodes, setOrphanNodes]}>
+        <Slate editor={editor} value={editorState} onChange={setEditorState}>
+          <div className='sticky top-0'>
+            <Header
+              title={title}
+              createdAt={createdAt}
+              onChangeTitle={setTitle}
+              onPressSave={handlePressSave}
+            />
+            <Toolbar />
+          </div>
+          <TemplateEditor>
+            <Editable
+              spellCheck
+              placeholder='Start typing...'
+              renderElement={renderElement}
+              renderLeaf={renderLeaf}
+              onKeyDown={handleEditorKeydown}
+            />
+          </TemplateEditor>
+        </Slate>
+      </OrphanNodesContext.Provider>
     </div>
   )
 }

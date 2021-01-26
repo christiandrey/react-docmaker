@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState
 } from 'react'
-import { useEditor } from '../../../core/hooks'
+import { useEditor, useOrphanNodes } from '../../../core/hooks'
 import {
   EditableAttributes,
   EditableElementType,
@@ -31,13 +31,16 @@ const ConditionPopup: FC<ConditionPopupProps> = ({
   onSubmitEditing
 }) => {
   const editor = useEditor()
+  const [orphanNodes] = useOrphanNodes()
   const editableNodes = getMatchingNodes(
     editor,
     (o) =>
       o.type === 'editable' &&
       !(o.valueRef as string)?.length &&
       ['options', 'radio'].includes(o.dataType as string)
-  ).map((o) => o as EditableElementType<EditableAttributes>)
+  )
+    .concat(orphanNodes)
+    .map((o) => o as EditableElementType<EditableAttributes>)
 
   const [parent, setParent] = useState('')
   const [value, setValue] = useState('')

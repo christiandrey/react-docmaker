@@ -1,5 +1,6 @@
-import { useState, useCallback, useMemo, MouseEvent } from 'react'
+import { useState, useCallback, useMemo, MouseEvent, useContext } from 'react'
 import { useSlate } from 'slate-react'
+import OrphanNodesContext from '../contexts/orphan-nodes'
 import {
   BlockAlignment,
   getAlignment,
@@ -108,4 +109,9 @@ export function useCanRedo(): boolean {
 export function useConditionActive(): boolean {
   const editor = useEditor()
   return isMarkActive(editor, 'ref')
+}
+
+export function useOrphanNodes() {
+  const context = useContext(OrphanNodesContext)
+  return context
 }

@@ -20,6 +20,7 @@ import {
   MdTextFields,
   MdTransform
 } from 'react-icons/md'
+import { FiInbox } from 'react-icons/fi'
 import Icon from '../icon'
 import IconGroup from '../icon-group'
 import {
@@ -31,12 +32,14 @@ import {
   useEditor,
   useCanUndo,
   useCanRedo,
-  useConditionActive
+  useConditionActive,
+  useOrphanNodes
 } from '../../core/hooks'
 import TextSizePopup from '../popups/text-size'
 import ColorPopup from '../popups/color'
 import {
   BlockAlignment,
+  createEditableNode,
   decreaseIndentation,
   EditableAttributes,
   EditableRefAttributes,
@@ -63,6 +66,7 @@ import ImagePopup, { ImageProps } from '../popups/image'
 import ImageSizePopup from '../popups/image-size'
 import EditablePopupProps from '../popups/editable'
 import ConditionPopup from '../popups/condition'
+import OrphanNodesPopup from '../popups/orphan-nodes'
 
 const Toolbar: FC = () => {
   const editor = useEditor()
@@ -73,6 +77,7 @@ const Toolbar: FC = () => {
   const imagePopupAnchorRef = useRef(null)
   const imageSizePopupAnchorRef = useRef(null)
   const conditionPopupAnchorRef = useRef(null)
+  const orphanNodesPopupAnchorRef = useRef(null)
 
   const textSizePopup = usePopupUtils()
   const colorPopup = usePopupUtils()
@@ -80,6 +85,7 @@ const Toolbar: FC = () => {
   const imageSizePopup = usePopupUtils()
   const editablePopup = usePopupUtils()
   const conditionPopup = usePopupUtils()
+  const orphanNodesPopup = usePopupUtils()
 
   const textSizeValue = useTextSizeValue()
   const leafColorValue = useLeafColorValue()
@@ -87,6 +93,8 @@ const Toolbar: FC = () => {
   const canUndo = useCanUndo()
   const canRedo = useCanRedo()
   const conditionActive = useConditionActive()
+
+  const [, setOrphanNodes] = useOrphanNodes()
 
   const handleChangeTextSizeOption = useCallback(
     (value: HeadingFormatType) => {
@@ -163,15 +171,21 @@ const Toolbar: FC = () => {
   )
 
   const handleCreateEditable = useCallback(
-    (value: EditableAttributes) => {
+    (value: EditableAttributes, isOrphan = false) => {
       if (notNil(editorSelection.current)) {
         Transforms.select(editor, editorSelection.current)
       }
 
-      insertEditableBlock(editor, value)
+      if (isOrphan) {
+        const editableNode = createEditableNode(value, true)
+        setOrphanNodes((o) => [editableNode, ...o])
+      } else {
+        insertEditableBlock(editor, value)
+      }
+
       focusEditor(editor)
     },
-    [editor]
+    [editor, setOrphanNodes]
   )
 
   const handleSetConditionActive = useCallback(
@@ -409,6 +423,15 @@ const Toolbar: FC = () => {
             <GrRedo />
           </IconButton>
         </IconGroup>
+        <div className='flex flex-1 items-center justify-end border-none'>
+          <IconButton
+            ref={orphanNodesPopupAnchorRef}
+            active={orphanNodesPopup.visible}
+            onPress={orphanNodesPopup.open}
+          >
+            <FiInbox />
+          </IconButton>
+        </div>
       </div>
       <TextSizePopup
         anchorRef={textSizePopupAnchorRef}
@@ -446,6 +469,11 @@ const Toolbar: FC = () => {
         isVisible={conditionPopup.visible}
         onRequestClose={conditionPopup.close}
         onSubmitEditing={handleSetConditionActive}
+      />
+      <OrphanNodesPopup
+        anchorRef={orphanNodesPopupAnchorRef}
+        isVisible={orphanNodesPopup.visible}
+        onRequestClose={orphanNodesPopup.close}
       />
     </Fragment>
   )

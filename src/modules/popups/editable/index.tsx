@@ -8,7 +8,7 @@ import EditableCreateNew from './create-new'
 type EditablePopupProps = {
   isVisible: boolean
   onRequestClose: Fn
-  onSubmit: (attributes: EditableAttributes) => void
+  onSubmit: (attributes: EditableAttributes, isOrphan?: boolean) => void
 }
 
 const EditablePopupProps: FC<EditablePopupProps> = ({
@@ -19,8 +19,8 @@ const EditablePopupProps: FC<EditablePopupProps> = ({
   const [segment, setSegment] = useState(0)
 
   const handleSubmit = useCallback(
-    (attributes: EditableAttributes) => {
-      onSubmit?.(attributes)
+    (attributes: EditableAttributes, isOrphan = false) => {
+      onSubmit?.(attributes, isOrphan)
       onRequestClose?.()
       setSegment(0)
     },

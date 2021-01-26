@@ -59,6 +59,7 @@ export type EditableAttributes = Partial<{
   tip: string
   valueRef: string
   ref: EditableRefAttributes
+  isOrphan: boolean
 }>
 
 export function isBlockActive(
@@ -294,6 +295,25 @@ export function composeWithEditable<T extends object>(
   }
 }
 
+export function createEditableNode(
+  attributes: EditableAttributes,
+  isOrphan = false
+) {
+  let editableNode: SlateElement & EditableAttributes = {
+    type: 'editable',
+    ...attributes,
+    children: [{ text: '' }]
+  }
+
+  if (isOrphan) {
+    editableNode.isOrphan = isOrphan
+  }
+
+  editableNode = composeWithEditable(editableNode)
+
+  return editableNode
+}
+
 export function insertImageBlock(
   editor: SlateEditorType,
   attributes: ImageProps,
@@ -324,13 +344,7 @@ export function insertEditableBlock(
   editor: SlateEditorType,
   attributes: EditableAttributes
 ) {
-  let editableNode: SlateElement & EditableAttributes = {
-    type: 'editable',
-    ...attributes,
-    children: [{ text: '' }]
-  }
-
-  editableNode = composeWithEditable(editableNode)
+  const editableNode = createEditableNode(attributes)
 
   Transforms.insertNodes(editor, editableNode)
   Transforms.move(editor)

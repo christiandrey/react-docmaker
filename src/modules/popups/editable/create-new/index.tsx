@@ -28,7 +28,7 @@ import {
 import { formatDate, generateUUID } from '../../../../core/utils'
 
 type EditableCreateNewProps = {
-  onSubmit?: (attributes: EditableAttributes) => void
+  onSubmit?: (attributes: EditableAttributes, isOrphan?: boolean) => void
 }
 
 const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
@@ -49,6 +49,7 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
   const [options, setOptions] = useState<Array<EditableOption>>([])
   const [editingOption, setEditingOption] = useState('')
   const [showTip, setShowTip] = useState(false)
+  const [isOrphan, setIsOrphan] = useState(false)
   const [tip, setTip] = useState('')
 
   const isValid = useMemo(
@@ -117,11 +118,12 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
       showTip
     )
 
-    onSubmit?.(data)
+    onSubmit?.(data, isOrphan)
   }, [
     dataType,
     dateTimeFormat,
     defaultValue,
+    isOrphan,
     label,
     multiline,
     onSubmit,
@@ -295,6 +297,10 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
           />
         </Field>
       )}
+      <div className='flex flex-1 justify-between items-center mb-18'>
+        <div>Save in Icebox</div>
+        <Switch value={isOrphan} onChangeValue={setIsOrphan} />
+      </div>
       <div className='flex justify-end pt-24'>
         <Button
           disabled={!isValid}
