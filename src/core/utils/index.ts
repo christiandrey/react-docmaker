@@ -78,6 +78,14 @@ export function formatDate(dateTime: ValidDate, token = 'yyyy-MM-dd'): string {
   }
 }
 
+export function toDate(dateTime: ValidDate): Date {
+  if (!dateTime) {
+    return new Date()
+  }
+
+  return dateTime instanceof Date ? dateTime : new Date(dateTime)
+}
+
 // ----------------------------------------------------------------
 // STRING
 // ----------------------------------------------------------------

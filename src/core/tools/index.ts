@@ -60,6 +60,18 @@ export type EditableAttributes = Partial<{
   valueRef: string
   ref: EditableRefAttributes
   isOrphan: boolean
+  children: Array<EditableAttributes & { text: string }>
+}>
+
+export type DocmakerNode = EditableElementType<
+  EditableAttributes & { text: string }
+>
+
+export type DocmakerData = Partial<{
+  title: string
+  createdAt: string
+  nodes: Array<DocmakerNode>
+  orphans: Array<DocmakerNode>
 }>
 
 export function isBlockActive(
