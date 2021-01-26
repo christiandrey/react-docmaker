@@ -51,7 +51,7 @@ const TemplateLeaf: FC<TemplateLeafProps> = ({
     <span
       {...composeWithClassName(
         composeWithStyle(attributes, { color: leaf.color }),
-        classnames({ 'bg-green-highlight rounded-default': notNil(leaf.ref) })
+        classnames({ 'bg-green-highlight': notNil(leaf.ref) })
       )}
     >
       {children}

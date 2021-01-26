@@ -74,7 +74,10 @@ export function isBlockActive(
   return !!match
 }
 
-export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
+export function isMarkActiveLegacy(
+  editor: SlateEditorType,
+  format: LeafFormatType
+) {
   if (!editor) {
     return null
   }
@@ -82,10 +85,57 @@ export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
   const marks = Editor.marks(editor)
 
   if (notNil(marks)) {
-    return format === 'ref' ? notNil(marks[format]) : marks[format] === true
+    const value = marks[format]
+    return format === 'ref' ? notNil(value) : value === true
   }
 
   return false
+}
+
+export function isMarkActive(editor: SlateEditorType, format: LeafFormatType) {
+  if (!editor) {
+    return null
+  }
+
+  const marks = Editor.marks(editor)
+  const nodesInSelection = getMatchingNodesInSelection(editor, (o) =>
+    Editor.isInline(editor, o)
+  )
+  const editableNodes = getMatchingNodesInSelection(
+    editor,
+    (o) => o.type === 'editable'
+  )
+
+  let marksResolution = false
+  let editablesResolution = false
+
+  if (notNil(marks)) {
+    const value = marks[format]
+    marksResolution = ['color', 'ref'].includes(format)
+      ? notNil(value)
+      : value === true
+  }
+
+  if (editableNodes?.length) {
+    editablesResolution = editableNodes
+      .map((o) =>
+        ['color', 'ref'].includes(format)
+          ? notNil(o[format])
+          : o[format] === true
+      )
+      .every((o) => o)
+  }
+
+  if (
+    nodesInSelection?.length &&
+    nodesInSelection.every((o) => editableNodes.includes(o))
+  ) {
+    return editablesResolution
+  }
+
+  return editableNodes?.length
+    ? editablesResolution && marksResolution
+    : marksResolution
 }
 
 export function isColorMarkActive(editor: SlateEditorType) {
@@ -103,10 +153,32 @@ export function getColorMark(editor: SlateEditorType) {
   }
 
   const marks = Editor.marks(editor)
-  return marks?.color
+  const nodesInSelection = getMatchingNodesInSelection(editor, (o) =>
+    Editor.isInline(editor, o)
+  )
+  const editableNodes = getMatchingNodesInSelection(
+    editor,
+    (o) => o.type === 'editable'
+  )
+
+  const marksValue = marks?.color
+  let editablesValue = null
+
+  if (editableNodes?.length) {
+    editablesValue = editableNodes[0].color
+  }
+
+  if (
+    nodesInSelection?.length &&
+    nodesInSelection.every((o) => editableNodes.includes(o))
+  ) {
+    return editablesValue
+  }
+
+  return editableNodes?.length ? editablesValue : marksValue
 }
 
-export function toggleMarkActive(
+export function toggleMarkActiveLegacy(
   editor: SlateEditorType,
   format: LeafFormatType
 ) {
@@ -119,12 +191,47 @@ export function toggleMarkActive(
   }
 }
 
+export function toggleMarkActive(
+  editor: SlateEditorType,
+  format: LeafFormatType
+) {
+  const isActive = isMarkActive(editor, format)
+
+  if (isActive) {
+    Editor.removeMark(editor, format)
+    Transforms.unsetNodes(editor, format, {
+      match: (o) => Editor.isVoid(editor, o) && o.type === 'editable'
+    })
+  } else {
+    Transforms.setNodes(
+      editor,
+      { [format]: true },
+      {
+        match: (o) => Editor.isVoid(editor, o) && o.type === 'editable',
+        hanging: true
+      }
+    )
+    Editor.addMark(editor, format, true)
+  }
+}
+
 export function toggleColorMarkActive(editor: SlateEditorType, value?: string) {
   const existingMark = getColorMark(editor)
 
   if (notNil(existingMark) && areEqualColors(existingMark, value)) {
     Editor.removeMark(editor, 'color')
+    Transforms.unsetNodes(editor, 'color', {
+      match: (o) => Editor.isVoid(editor, o) && o.type === 'editable'
+    })
   } else {
+    Transforms.setNodes(
+      editor,
+      { color: value },
+      {
+        match: (o) => Editor.isVoid(editor, o) && o.type === 'editable',
+        hanging: true
+      }
+    )
     Editor.addMark(editor, 'color', value)
   }
 }
