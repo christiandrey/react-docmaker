@@ -34,10 +34,8 @@ type EditableCreateNewProps = {
 const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
   const now = useRef(new Date()).current
   const dataTypeOptions = useRef(Object.entries(EDITABLE_DATA_TYPES)).current
-  const dateFormatOptions = useRef(DATE_FORMATS.map((o) => formatDate(now, o)))
-    .current
-  const timeFormatOptions = useRef(TIME_FORMATS.map((o) => formatDate(now, o)))
-    .current
+  const dateFormatOptions = useRef(DATE_FORMATS).current
+  const timeFormatOptions = useRef(TIME_FORMATS).current
 
   const [dataType, setDataType] = useState<EditableDataType>(
     '' as EditableDataType
@@ -210,7 +208,7 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
               </option>
               {dateFormatOptions.map((o) => (
                 <option key={o} value={o}>
-                  {o}
+                  {formatDate(now, o)}
                 </option>
               ))}
             </select>
@@ -227,7 +225,7 @@ const EditableCreateNew: FC<EditableCreateNewProps> = ({ onSubmit }) => {
               </option>
               {timeFormatOptions.map((o) => (
                 <option key={o} value={o}>
-                  {o}
+                  {formatDate(now, o)}
                 </option>
               ))}
             </select>

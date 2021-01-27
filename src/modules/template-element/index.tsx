@@ -3,7 +3,6 @@ import ImageElement, { ImageElementType } from '../elements/image'
 import {
   BlockAlignment,
   composeWithAlignmentClassName,
-  composeWithClassName,
   composeWithStyle,
   EditableAttributes,
   EditableElementType,
@@ -68,7 +67,13 @@ const TemplateElement: FC<TemplateElementProps> = ({
       )
     case 'bulleted-list':
       return (
-        <ul {...composeWithClassName(attributes, 'list-disc list-inside')}>
+        <ul
+          {...composeWithAlignmentClassName(
+            attributes,
+            alignment,
+            'list-disc list-inside'
+          )}
+        >
           {children}
         </ul>
       )
@@ -135,7 +140,13 @@ const TemplateElement: FC<TemplateElementProps> = ({
       )
     case 'numbered-list':
       return (
-        <ol {...composeWithClassName(attributes, 'list-decimal list-inside')}>
+        <ol
+          {...composeWithAlignmentClassName(
+            attributes,
+            alignment,
+            'list-decimal list-inside'
+          )}
+        >
           {children}
         </ol>
       )
