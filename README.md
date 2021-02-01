@@ -12,6 +12,8 @@ npm install --save react-docmaker
 
 ## Usage
 
+Check out the [demo](https://christiandrey.github.io/react-docmaker/) in the [example folder](https://github.com/christiandrey/react-docmaker/tree/main/example).
+
 ```tsx
 import React, { Component } from 'react'
 
