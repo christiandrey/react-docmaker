@@ -1,11 +1,13 @@
 import React, { FC, PropsWithChildren, useMemo } from 'react'
 import { useFocused, useSelected } from 'slate-react'
-import classnames from 'classnames'
+
 import { EditableElementType } from '../../../core/tools'
+import classnames from 'classnames'
 import { getPlaceholderImage } from '../../../core/utils'
 
 export type ImageElementType = EditableElementType<{
   url: string
+  label?: string
   width?: number
   height?: number
 }>

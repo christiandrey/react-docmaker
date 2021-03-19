@@ -1,3 +1,4 @@
+import { ImageDimensions, notNil, parseNumber } from '../../../core/utils'
 import React, {
   ChangeEvent,
   FC,
@@ -5,17 +6,18 @@ import React, {
   useCallback,
   useState
 } from 'react'
-import { ImageDimensions, notNil, parseNumber } from '../../../core/utils'
+
 import Button from '../../button'
+import Field from '../../field'
+import Icon from '../../icon'
 import Popup from '../../popup'
 import { TiTimes } from '@react-icons/all-files/ti/TiTimes'
-import Icon from '../../icon'
 
 type ImageSizePopupProps = {
   anchorRef: MutableRefObject<Element>
   isVisible: boolean
   onRequestClose: Fn
-  onSubmitEditing?: (value: ImageDimensions) => void
+  onSubmitEditing?: (value: ImageDimensions, label?: string) => void
 }
 
 const ImageSizePopup: FC<ImageSizePopupProps> = ({
@@ -26,8 +28,10 @@ const ImageSizePopup: FC<ImageSizePopupProps> = ({
 }) => {
   const [width, setWidth] = useState(100)
   const [height, setHeight] = useState(100)
+  const [label, setLabel] = useState('')
 
-  const isValid = notNil(width) && notNil(height) && width * height > 0
+  const isValid =
+    notNil(width) && notNil(height) && !!label?.length && width * height > 0
 
   const handleChangeWidth = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setWidth(parseNumber(e.target.value))
@@ -37,6 +41,10 @@ const ImageSizePopup: FC<ImageSizePopupProps> = ({
     setWidth(parseNumber(e.target.value))
   }, [])
 
+  const handleChangeLabel = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setLabel(e.target.value)
+  }, [])
+
   const handleRequestClose = useCallback(() => {
     setWidth(100)
     setHeight(100)
@@ -44,12 +52,15 @@ const ImageSizePopup: FC<ImageSizePopupProps> = ({
   }, [onRequestClose])
 
   const handlePressSubmit = useCallback(() => {
-    onSubmitEditing?.({
-      width,
-      height
-    })
+    onSubmitEditing?.(
+      {
+        width,
+        height
+      },
+      label
+    )
     handleRequestClose()
-  }, [handleRequestClose, height, onSubmitEditing, width])
+  }, [handleRequestClose, height, label, onSubmitEditing, width])
 
   return (
     <Popup
@@ -64,6 +75,18 @@ const ImageSizePopup: FC<ImageSizePopupProps> = ({
       contentClassName='rounded-default'
     >
       <div className='rounded-default p-8 bg-white border border-gray-300 overflow-hidden text-gray-500'>
+        <div>
+          <Field label='Label' className='mb-8'>
+            <input
+              value={label}
+              onChange={handleChangeLabel}
+              placeholder='Image upload label'
+            />
+          </Field>
+        </div>
+        <span className='text-blue-500 block mb-4 text-subhead font-medium'>
+          Dimensions
+        </span>
         <div className='flex items-center justify-between space-x-4 mb-8'>
           <div className='h-32 overflow-hidden rounded-default border border-gray-200 flex items-center justify-start'>
             <input
