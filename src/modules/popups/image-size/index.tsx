@@ -38,7 +38,7 @@ const ImageSizePopup: FC<ImageSizePopupProps> = ({
   }, [])
 
   const handleChangeHeight = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setWidth(parseNumber(e.target.value))
+    setHeight(parseNumber(e.target.value))
   }, [])
 
   const handleChangeLabel = useCallback((e: ChangeEvent<HTMLInputElement>) => {
