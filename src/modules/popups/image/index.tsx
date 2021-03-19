@@ -1,3 +1,4 @@
+import { ImageDimensions, getImageSizeAsync, nil } from '../../../core/utils'
 import React, {
   ChangeEvent,
   FC,
@@ -6,14 +7,15 @@ import React, {
   useMemo,
   useState
 } from 'react'
-import Popup from '../../popup'
+
 import { BiLink } from '@react-icons/all-files/bi/BiLink'
-import Icon from '../../icon'
 import Button from '../../button'
-import { getImageSizeAsync, ImageDimensions, nil } from '../../../core/utils'
+import Icon from '../../icon'
+import Popup from '../../popup'
 
 export type ImageProps = {
   url?: string
+  label?: string
   dimensions: ImageDimensions
 }
 

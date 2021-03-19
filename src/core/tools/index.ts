@@ -1,12 +1,13 @@
-import { Editor, Element as SlateElement, Node, Transforms } from 'slate'
+import { Editor, Node, Element as SlateElement, Transforms } from 'slate'
+import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
+import { areEqualColors, clamp, generateUUID, nil, notNil } from '../utils'
+
+import { CSSProperties } from 'react'
+import { HistoryEditor } from 'slate-history'
+import { ImageElementType } from '../../modules/elements/image'
+import { ImageProps } from '../../modules/popups/image'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
-import { CSSProperties } from 'react'
-import { areEqualColors, clamp, generateUUID, nil, notNil } from '../utils'
-import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
-import { HistoryEditor } from 'slate-history'
-import { ImageProps } from '../../modules/popups/image'
-import { ImageElementType } from '../../modules/elements/image'
 
 export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
 
@@ -446,7 +447,8 @@ export function insertImageBlock(
 ) {
   const {
     url,
-    dimensions: { width, height }
+    dimensions: { width, height },
+    label
   } = attributes
 
   let imageNode: SlateElement & ImageElementType = {
@@ -460,6 +462,7 @@ export function insertImageBlock(
   if (editable) {
     imageNode.type = 'editable'
     imageNode.dataType = 'image'
+    imageNode.label = label
     imageNode = composeWithEditable(imageNode)
   }
 

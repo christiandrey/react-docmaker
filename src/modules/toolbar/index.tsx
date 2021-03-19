@@ -1,10 +1,52 @@
-import React, { FC, useRef, Fragment, useCallback } from 'react'
-import IconButton from '../icon-button'
-import { RiImage2Fill } from '@react-icons/all-files/ri/RiImage2Fill'
-import { RiImageEditFill } from '@react-icons/all-files/ri/RiImageEditFill'
-import classnames from 'classnames'
-import { GrUndo } from '@react-icons/all-files/gr/GrUndo'
+import {
+  BlockAlignment,
+  EditableAttributes,
+  EditableRefAttributes,
+  HeadingFormatType,
+  LeafFormatType,
+  createEditableNode,
+  decreaseIndentation,
+  focusEditor,
+  increaseIndentation,
+  insertEditableBlock,
+  insertImageBlock,
+  isBlockActive,
+  isMarkActive,
+  setAlignment,
+  setConditionActive,
+  toggleBlockActive,
+  toggleColorMarkActive,
+  toggleMarkActive,
+  unsetConditionActive
+} from '../../core/tools'
+import { ImageDimensions, nil, notNil } from '../../core/utils'
+import ImagePopup, { ImageProps } from '../popups/image'
+import React, { FC, Fragment, useCallback, useRef } from 'react'
+import {
+  useAlignmentValue,
+  useCanRedo,
+  useCanUndo,
+  useConditionActive,
+  useEditor,
+  useLeafColorValue,
+  useMouseDown,
+  useOrphanNodes,
+  usePopupUtils,
+  useTextSizeValue
+} from '../../core/hooks'
+
+import { ALIGNMENTS } from '../../core/constants'
+import ColorPopup from '../popups/color'
+import ConditionPopup from '../popups/condition'
+import EditablePopupProps from '../popups/editable'
+import { FiInbox } from '@react-icons/all-files/fi/FiInbox'
 import { GrRedo } from '@react-icons/all-files/gr/GrRedo'
+import { GrUndo } from '@react-icons/all-files/gr/GrUndo'
+import { HistoryEditor } from 'slate-history'
+import Icon from '../icon'
+import IconButton from '../icon-button'
+import IconGroup from '../icon-group'
+import ImageSizePopup from '../popups/image-size'
 import { MdFormatAlignCenter } from '@react-icons/all-files/md/MdFormatAlignCenter'
 import { MdFormatAlignJustify } from '@react-icons/all-files/md/MdFormatAlignJustify'
 import { MdFormatAlignLeft } from '@react-icons/all-files/md/MdFormatAlignLeft'
@@ -20,53 +62,12 @@ import { MdFormatStrikethrough } from '@react-icons/all-files/md/MdFormatStriket
 import { MdFormatUnderlined } from '@react-icons/all-files/md/MdFormatUnderlined'
 import { MdTextFields } from '@react-icons/all-files/md/MdTextFields'
 import { MdTransform } from '@react-icons/all-files/md/MdTransform'
-import { FiInbox } from '@react-icons/all-files/fi/FiInbox'
-import Icon from '../icon'
-import IconGroup from '../icon-group'
-import {
-  useTextSizeValue,
-  useLeafColorValue,
-  useMouseDown,
-  usePopupUtils,
-  useAlignmentValue,
-  useEditor,
-  useCanUndo,
-  useCanRedo,
-  useConditionActive,
-  useOrphanNodes
-} from '../../core/hooks'
-import TextSizePopup from '../popups/text-size'
-import ColorPopup from '../popups/color'
-import {
-  BlockAlignment,
-  createEditableNode,
-  decreaseIndentation,
-  EditableAttributes,
-  EditableRefAttributes,
-  focusEditor,
-  HeadingFormatType,
-  increaseIndentation,
-  insertEditableBlock,
-  insertImageBlock,
-  isBlockActive,
-  isMarkActive,
-  LeafFormatType,
-  setAlignment,
-  setConditionActive,
-  toggleBlockActive,
-  toggleColorMarkActive,
-  toggleMarkActive,
-  unsetConditionActive
-} from '../../core/tools'
-import { ImageDimensions, nil, notNil } from '../../core/utils'
-import { Transforms } from 'slate'
-import { ALIGNMENTS } from '../../core/constants'
-import { HistoryEditor } from 'slate-history'
-import ImagePopup, { ImageProps } from '../popups/image'
-import ImageSizePopup from '../popups/image-size'
-import EditablePopupProps from '../popups/editable'
-import ConditionPopup from '../popups/condition'
 import OrphanNodesPopup from '../popups/orphan-nodes'
+import { RiImage2Fill } from '@react-icons/all-files/ri/RiImage2Fill'
+import { RiImageEditFill } from '@react-icons/all-files/ri/RiImageEditFill'
+import TextSizePopup from '../popups/text-size'
+import { Transforms } from 'slate'
+import classnames from 'classnames'
 
 const Toolbar: FC = () => {
   const editor = useEditor()
@@ -159,12 +160,12 @@ const Toolbar: FC = () => {
   )
 
   const handleCreateEditableImage = useCallback(
-    (value: ImageDimensions) => {
+    (value: ImageDimensions, label: string) => {
       if (notNil(editorSelection.current)) {
         Transforms.select(editor, editorSelection.current)
       }
 
-      insertImageBlock(editor, { dimensions: value }, true)
+      insertImageBlock(editor, { dimensions: value, label }, true)
       focusEditor(editor)
     },
     [editor]
@@ -303,6 +304,7 @@ const Toolbar: FC = () => {
         <IconGroup>
           <IconButton
             data='bold'
+            tip='Bold'
             active={isMarkActive(editor, 'bold')}
             onPress={handlePressInlineFormat}
           >
@@ -310,6 +312,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='italic'
+            tip='Italic'
             active={isMarkActive(editor, 'italic')}
             onPress={handlePressInlineFormat}
           >
@@ -317,6 +320,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='underline'
+            tip='Underline'
             active={isMarkActive(editor, 'underline')}
             onPress={handlePressInlineFormat}
           >
@@ -324,6 +328,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='strikethrough'
+            tip='Strikethrough'
             active={isMarkActive(editor, 'strikethrough')}
             onPress={handlePressInlineFormat}
           >
@@ -332,6 +337,7 @@ const Toolbar: FC = () => {
         </IconGroup>
         <IconGroup>
           <IconButton
+            tip='Align left'
             active={nil(alignmentValue) || alignmentValue === ALIGNMENTS.left}
             onPress={handlePressAlignment}
           >
@@ -339,6 +345,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='center'
+            tip='Align center'
             active={alignmentValue === ALIGNMENTS.center}
             onPress={handlePressAlignment}
           >
@@ -346,6 +353,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='right'
+            tip='Align right'
             active={alignmentValue === ALIGNMENTS.right}
             onPress={handlePressAlignment}
           >
@@ -353,6 +361,7 @@ const Toolbar: FC = () => {
           </IconButton>
           <IconButton
             data='justify'
+            tip='Justify'
             active={alignmentValue === ALIGNMENTS.justify}
             onPress={handlePressAlignment}
           >
@@ -360,21 +369,29 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton onPress={handlePressDecreaseIndentation}>
+          <IconButton
+            tip='Decrease indent'
+            onPress={handlePressDecreaseIndentation}
+          >
             <MdFormatIndentDecrease />
           </IconButton>
-          <IconButton onPress={handlePressIncreaseIndentation}>
+          <IconButton
+            tip='Increase indent'
+            onPress={handlePressIncreaseIndentation}
+          >
             <MdFormatIndentIncrease />
           </IconButton>
         </IconGroup>
         <IconGroup>
           <IconButton
+            tip='Numbered list'
             active={isBlockActive(editor, 'numbered-list')}
             onPress={handlePressNumberedList}
           >
             <MdFormatListNumbered />
           </IconButton>
           <IconButton
+            tip='Bulleted list'
             active={isBlockActive(editor, 'bulleted-list')}
             onPress={handlePressBulletedList}
           >
@@ -383,6 +400,7 @@ const Toolbar: FC = () => {
         </IconGroup>
         <IconGroup>
           <IconButton
+            tip='Insert an image'
             ref={imagePopupAnchorRef}
             active={imagePopup.visible}
             onPress={handlePressImage}
@@ -392,6 +410,7 @@ const Toolbar: FC = () => {
         </IconGroup>
         <IconGroup>
           <IconButton
+            tip='Insert an editable image'
             ref={imageSizePopupAnchorRef}
             active={imageSizePopup.visible}
             onPress={handlePressEditableImage}
@@ -400,6 +419,7 @@ const Toolbar: FC = () => {
             <RiImageEditFill />
           </IconButton>
           <IconButton
+            tip='Insert editable content'
             active={editablePopup.visible}
             className='border border-dotted border-gray-500'
             onPress={handlePressInsertEditable}
@@ -407,6 +427,7 @@ const Toolbar: FC = () => {
             <MdTextFields />
           </IconButton>
           <IconButton
+            tip='Add a display condition'
             ref={conditionPopupAnchorRef}
             active={conditionActive || conditionPopup.visible}
             onPress={handlePressCondition}
@@ -416,15 +437,16 @@ const Toolbar: FC = () => {
           </IconButton>
         </IconGroup>
         <IconGroup>
-          <IconButton onPress={handlePressUndo} disabled={!canUndo}>
+          <IconButton tip='Undo' onPress={handlePressUndo} disabled={!canUndo}>
             <GrUndo />
           </IconButton>
-          <IconButton onPress={handlePressRedo} disabled={!canRedo}>
+          <IconButton tip='Redo' onPress={handlePressRedo} disabled={!canRedo}>
             <GrRedo />
           </IconButton>
         </IconGroup>
         <div className='flex flex-1 items-center justify-end border-none'>
           <IconButton
+            tip='Open Icebox'
             ref={orphanNodesPopupAnchorRef}
             active={orphanNodesPopup.visible}
             onPress={orphanNodesPopup.open}
