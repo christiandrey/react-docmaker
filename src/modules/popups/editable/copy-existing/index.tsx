@@ -1,5 +1,3 @@
-import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
-import { useEditor, useOrphanNodes } from '../../../../core/hooks'
 import {
   EditableAttributes,
   EditableElementType,
@@ -7,8 +5,11 @@ import {
   getEditableAttributesValidity,
   getMatchingNodes
 } from '../../../../core/tools'
+import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react'
+
 import Button from '../../../button'
 import Field from '../../../field'
+import { useEditor } from '../../../../core/hooks'
 
 type EditableCopyExistingProps = {
   onSubmit?: (attributes: EditableAttributes) => void
@@ -16,16 +17,13 @@ type EditableCopyExistingProps = {
 
 const EditableCopyExisting: FC<EditableCopyExistingProps> = ({ onSubmit }) => {
   const editor = useEditor()
-  const [orphanNodes] = useOrphanNodes()
   const editableNodes = useMemo(
     () =>
       getMatchingNodes(
         editor,
         (o) => o.type === 'editable' && !(o.valueRef as string)?.length
-      )
-        .concat(orphanNodes)
-        .map((o) => o as EditableElementType<EditableAttributes>),
-    [editor, orphanNodes]
+      ).map((o) => o as EditableElementType<EditableAttributes>),
+    [editor]
   )
 
   const [valueRef, setValueRef] = useState('')
