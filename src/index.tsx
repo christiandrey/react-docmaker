@@ -1,27 +1,30 @@
+import 'tailwindcss/tailwind.css'
+
+import { DocmakerData, SlateEditorType, toggleMarkActive } from './core/tools'
+import { Editable, Slate, withReact } from 'slate-react'
+import { Node, createEditor } from 'slate'
 import React, {
+  KeyboardEvent,
   useCallback,
   useMemo,
   useRef,
-  useState,
-  KeyboardEvent
+  useState
 } from 'react'
-import classnames from 'classnames'
-import 'tailwindcss/tailwind.css'
-import Header from './modules/header'
-import Toolbar from './modules/toolbar'
-import TemplateEditor from './modules/template-editor'
-import { withHistory } from 'slate-history'
-import { Editable, Slate, withReact } from 'slate-react'
-import { createEditor, Node } from 'slate'
 import { stripHTMLEntities, toDate } from './core/utils'
-import { withHTML } from './core/plugins/paste-html'
+
+import { HOT_KEYS } from './core/constants'
+import Header from './modules/header'
+import OrphanNodesContext from './core/contexts/orphan-nodes'
+import TemplateEditor from './modules/template-editor'
 import TemplateElement from './modules/template-element'
 import TemplateLeaf from './modules/template-leaf'
-import { HOT_KEYS } from './core/constants'
+import Toolbar from './modules/toolbar'
+import classnames from 'classnames'
 import isHotkey from 'is-hotkey'
-import { DocmakerData, SlateEditorType, toggleMarkActive } from './core/tools'
+import { jsx } from 'slate-hyperscript'
+import { withDocxDeserializer } from 'slate-docx-deserializer'
 import { withEditable } from './core/plugins/editable'
-import OrphanNodesContext from './core/contexts/orphan-nodes'
+import { withHistory } from 'slate-history'
 
 interface Props {
   className?: string
@@ -36,7 +39,11 @@ export const DocmakerEditor = ({
 }: Props) => {
   const initialData = useRef(initialValue || ({} as DocmakerData)).current
   const editor = useMemo(
-    () => withEditable(withHTML(withReact(withHistory(createEditor())))),
+    () =>
+      withDocxDeserializer(
+        withEditable(withReact(withHistory(createEditor()))),
+        jsx
+      ),
     []
   )
   const createdAt = useRef(toDate(initialData.createdAt).toISOString()).current
