@@ -76,6 +76,7 @@
     "react-contenteditable": "3.3.5",
     "react-switch": "6.0.0",
     "slate": "0.59.0",
+    "slate-docx-deserializer": "1.0.4",
     "slate-history": "0.59.0",
     "slate-hyperscript": "0.59.0",
     "slate-react": "0.59.0",
