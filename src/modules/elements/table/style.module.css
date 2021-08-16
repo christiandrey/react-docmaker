@@ -1,0 +1,129 @@
+.table-cardbar {
+  top: -56px !important;
+  z-index: 2;
+}
+.table-horizontal-toolbar {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+
+  -webkit-user-select: none;
+  /* Safari */
+
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+
+  -moz-user-select: none;
+  /* Firefox */
+
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+
+  user-select: none;
+  white-space: nowrap;
+  z-index: 1;
+  position: absolute;
+  top: -20px;
+  left: 0;
+  /* left: 1px; */
+}
+.table-horizontal-toolbar .table-dragger-item {
+  @apply bg-blue-50 border border-solid border-gray-300;
+  display: inline-block;
+  height: 16px;
+  position: relative;
+}
+.table-horizontal-toolbar .table-dragger-item .table-trigger {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  width: 7px;
+  height: 16px;
+  z-index: 10;
+  cursor: col-resize;
+}
+.table-horizontal-toolbar .table-dragger-item .table-trigger:hover {
+  @apply bg-blue-500;
+}
+.table-horizontal-toolbar .table-dragger-item .table-trigger:active {
+  background: transparent;
+}
+
+.table-vertical-toolbar {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+
+  -webkit-user-select: none;
+  /* Safari */
+
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+
+  -moz-user-select: none;
+  /* Firefox */
+
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+
+  user-select: none;
+  z-index: 1;
+  position: absolute;
+  top: 1px;
+  left: -20px;
+}
+.table-vertical-toolbar .table-dragger-item {
+  @apply bg-blue-50 border border-solid border-gray-300;
+  width: 16px;
+  /* border: 1px solid #e8e8e8; */
+  position: relative;
+}
+.table-vertical-toolbar .table-dragger-item .table-trigger {
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 7px;
+  width: 16px;
+  z-index: 10;
+  cursor: row-resize;
+}
+.table-vertical-toolbar .table-dragger-item .table-trigger:hover {
+  @apply bg-blue-500;
+}
+.table-vertical-toolbar .table-dragger-item .table-trigger:active {
+  background: transparent;
+}
+
+.table {
+  margin: 4px 0;
+  overflow: auto;
+  border: solid 1px #000;
+}
+
+.table-tr {
+  border: none;
+}
+
+.table-td {
+  padding: 0;
+  box-sizing: border-box;
+  vertical-align: baseline;
+  border: solid 1px #000;
+  min-width: 32px;
+}
+
+.table-td ::selection {
+  color: inherit;
+  background: none;
+}
+
+.table-td.selectedCell {
+  @apply bg-blue-200;
+}
+
+.table-content {
+  overflow: auto;
+}
+
+.borderless,
+.borderless * {
+  border: none;
+}

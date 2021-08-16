@@ -1,12 +1,13 @@
+import Content, { ContentDimensions } from './content'
 import React, {
   MutableRefObject,
   useCallback,
   useEffect,
   useState
 } from 'react'
-import { useMouseDown } from '../../core/hooks'
 
-import Content, { ContentDimensions } from './content'
+import { createPortal } from 'react-dom'
+import { useMouseDown } from '../../core/hooks'
 
 export type AnchorRef = MutableRefObject<Element>
 
@@ -286,9 +287,7 @@ const Popup: React.FC<PopupProps> = ({
     }
   }, [isVisible, handleKeyUp])
 
-  if (!isVisible) return null
-
-  return (
+  const render = () => (
     <div className='fixed top-0 left-0 w-full h-full z-2'>
       <div
         className={
@@ -323,6 +322,10 @@ const Popup: React.FC<PopupProps> = ({
       </Content>
     </div>
   )
+
+  if (!isVisible) return null
+
+  return createPortal(render(), document.getElementById('docmaker-modal-root'))
 }
 
 Popup.defaultProps = {

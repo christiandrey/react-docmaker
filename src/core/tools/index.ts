@@ -1,4 +1,13 @@
-import { Editor, Node, Element as SlateElement, Transforms } from 'slate'
+import {
+  Editor,
+  Node,
+  NodeEntry,
+  Path,
+  Point,
+  Range,
+  Element as SlateElement,
+  Transforms
+} from 'slate'
 import { INDENTATION_FACTOR, LIST_TYPES } from '../constants'
 import { areEqualColors, clamp, generateUUID, nil, notNil } from '../utils'
 
@@ -8,6 +17,36 @@ import { ImageElementType } from '../../modules/elements/image'
 import { ImageProps } from '../../modules/popups/image'
 import { ReactEditor } from 'slate-react'
 import classnames from 'classnames'
+
+export type TableCell = {
+  type: 'table-cell'
+  key: string
+  rowspan?: number
+  colspan?: number
+  width?: number
+  height?: number
+  selectedCell?: boolean
+  children: Node[]
+} & SlateElement
+
+export type TableRow = {
+  type: 'table-row'
+  key: string
+  data: any
+  children: TableCell[]
+} & SlateElement
+
+export type TableContent = {
+  type: 'table-content'
+  children: Node[]
+} & SlateElement
+
+export type Table = {
+  type: 'table'
+  children: TableRow[]
+  data: any
+  borderless?: boolean
+} & SlateElement
 
 export type BlockAlignment = 'left' | 'center' | 'right' | 'justify'
 
@@ -26,10 +65,17 @@ export type ListFormatType = 'numbered-list' | 'bulleted-list'
 
 export type QuoteFormatType = 'block-quote'
 
+export type TableFormatType =
+  | 'table'
+  | 'table-content'
+  | 'table-row'
+  | 'table-cell'
+
 export type ElementFormatType =
   | HeadingFormatType
   | ListFormatType
   | QuoteFormatType
+  | TableFormatType
 
 export type SlateEditorType = Editor & ReactEditor & HistoryEditor
 
@@ -480,6 +526,38 @@ export function insertEditableBlock(
   Transforms.move(editor)
 }
 
+export function insertParagraph(
+  editor: Editor & ReactEditor,
+  at: Path | Point,
+  text = ''
+) {
+  Transforms.insertNodes(
+    editor,
+    {
+      type: 'paragraph',
+      children: [{ text }]
+    },
+    {
+      at
+    }
+  )
+}
+
+export function insertTableBlock(editor: SlateEditorType) {
+  if (!editor.selection) return
+
+  const node = Editor.above(editor, {
+    match: (n) => n.type === 'table'
+  })
+
+  const isCollapsed = Range.isCollapsed(editor.selection)
+
+  if (!node && isCollapsed) {
+    const table = createTable(3, 3)
+    Transforms.insertNodes(editor, table)
+  }
+}
+
 export function getEditableAttributes(
   attributes: EditableAttributes,
   showTip = false
@@ -615,4 +693,105 @@ export function unsetConditionActive(editor: SlateEditorType) {
   Transforms.unsetNodes(editor, 'ref', {
     match: (o) => Editor.isVoid(editor, o) && o.type === 'editable'
   })
+}
+
+export function checkTableIsExist(editor: Editor, table: NodeEntry) {
+  const cells = Array.from(
+    Editor.nodes(editor, {
+      at: table[1],
+      match: (n) => n.type === 'table-cell'
+    })
+  )
+
+  return !!cells.length
+}
+
+export function isTableElement(type: string) {
+  return (
+    type === 'table' ||
+    type === 'table-row' ||
+    type === 'table-cell' ||
+    type === 'table-content'
+  )
+}
+
+export function isInSameTable(editor: Editor): boolean {
+  if (!editor.selection) return false
+
+  const [start, end] = Editor.edges(editor, editor.selection)
+  const [startTable] = Editor.nodes(editor, {
+    at: start,
+    match: (n) => n.type === 'table'
+  })
+
+  const [endTable] = Editor.nodes(editor, {
+    at: end,
+    match: (n) => n.type === 'table'
+  })
+
+  if (startTable && endTable) {
+    const [, startPath]: [any, Path] = startTable
+    const [, endPath]: [any, Path] = endTable
+
+    if (Path.equals(startPath, endPath)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export function createTableContent(elements?: Node[]): TableContent {
+  return {
+    type: 'table-content',
+    children: elements || [{ type: 'paragraph', children: [{ text: '' }] }]
+  }
+}
+
+export function createTableCell({
+  elements,
+  colspan,
+  rowspan,
+  height,
+  width
+}: {
+  elements?: Node[]
+  height?: number
+  width?: number
+  colspan?: number
+  rowspan?: number
+} = {}): TableCell {
+  const content = createTableContent(elements)
+
+  return {
+    type: 'table-cell',
+    key: `cell_${generateUUID()}`,
+    children: [content],
+    width: width,
+    height: height,
+    colspan,
+    rowspan
+  }
+}
+
+export function createTableRow(columns: number): TableRow {
+  const cellNodes = [...new Array(columns)].map(() => createTableCell())
+
+  return {
+    type: 'table-row',
+    key: `row_${generateUUID()}`,
+    data: {},
+    children: cellNodes
+  }
+}
+
+export function createTable(columns: number, rows: number): Table {
+  const rowNodes = [...new Array(rows)].map(() => createTableRow(columns))
+
+  return {
+    type: 'table',
+    children: rowNodes,
+    borderless: false,
+    data: {}
+  }
 }

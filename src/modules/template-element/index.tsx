@@ -1,14 +1,16 @@
-import React, { FC, PropsWithChildren } from 'react'
-import ImageElement, { ImageElementType } from '../elements/image'
 import {
   BlockAlignment,
-  composeWithAlignmentClassName,
-  composeWithStyle,
   EditableAttributes,
   EditableElementType,
+  composeWithAlignmentClassName,
+  composeWithStyle,
   getIndentationPercent
 } from '../../core/tools'
+import ImageElement, { ImageElementType } from '../elements/image'
+import React, { FC, PropsWithChildren } from 'react'
+
 import EditableElement from '../elements/editable'
+import { Table } from '../elements/table'
 
 export type ElementType =
   | 'quote'
@@ -23,6 +25,10 @@ export type ElementType =
   | 'list-item'
   | 'numbered-list'
   | 'link'
+  | 'table'
+  | 'table-row'
+  | 'table-cell'
+  | 'table-content'
   | 'image'
   | 'editable'
 
@@ -30,6 +36,7 @@ type TemplateElementType = {
   type: ElementType
   alignment?: BlockAlignment
   indentation?: number
+  children: any
 } & ImageElementType &
   EditableElementType<EditableAttributes>
 
@@ -156,6 +163,11 @@ const TemplateElement: FC<TemplateElementProps> = ({
           {children}
         </a>
       )
+    case 'table':
+    case 'table-row':
+    case 'table-cell':
+    case 'table-content':
+      return <Table {...{ attributes, children, element }} />
     case 'image':
       return <ImageElement {...{ attributes, children, element }} />
     case 'editable':

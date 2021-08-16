@@ -10,6 +10,7 @@ import {
   increaseIndentation,
   insertEditableBlock,
   insertImageBlock,
+  insertTableBlock,
   isBlockActive,
   isMarkActive,
   setAlignment,
@@ -36,6 +37,7 @@ import {
 } from '../../core/hooks'
 
 import { ALIGNMENTS } from '../../core/constants'
+import { AiOutlineTable } from '@react-icons/all-files/ai/AiOutlineTable'
 import ColorPopup from '../popups/color'
 import ConditionPopup from '../popups/condition'
 import EditablePopupProps from '../popups/editable'
@@ -225,6 +227,10 @@ const Toolbar: FC = () => {
     editablePopup.open()
   })
 
+  const handlePressInsertTable = useMouseDown(() => {
+    insertTableBlock(editor)
+  })
+
   const handlePressCondition = useMouseDown(() => {
     if (conditionActive) {
       unsetConditionActive(editor)
@@ -406,6 +412,9 @@ const Toolbar: FC = () => {
             onPress={handlePressImage}
           >
             <RiImage2Fill />
+          </IconButton>
+          <IconButton tip='Insert a table' onPress={handlePressInsertTable}>
+            <AiOutlineTable />
           </IconButton>
         </IconGroup>
         <IconGroup>
