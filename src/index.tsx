@@ -21,10 +21,10 @@ import TemplateLeaf from './modules/template-leaf'
 import Toolbar from './modules/toolbar'
 import classnames from 'classnames'
 import isHotkey from 'is-hotkey'
-import { jsx } from 'slate-hyperscript'
-import { withDocxDeserializer } from 'slate-docx-deserializer'
 import { withEditable } from './core/plugins/editable'
+import { withHTML } from './core/plugins/paste-html'
 import { withHistory } from 'slate-history'
+import { withSchema } from './core/plugins/table'
 
 interface Props {
   className?: string
@@ -40,9 +40,8 @@ export const DocmakerEditor = ({
   const initialData = useRef(initialValue || ({} as DocmakerData)).current
   const editor = useMemo(
     () =>
-      withDocxDeserializer(
-        withEditable(withReact(withHistory(createEditor()))),
-        jsx
+      withSchema(
+        withHTML(withEditable(withReact(withHistory(createEditor()))))
       ),
     []
   )
@@ -114,6 +113,7 @@ export const DocmakerEditor = ({
               onKeyDown={handleEditorKeydown}
             />
           </TemplateEditor>
+          <div id='docmaker-modal-root' />
         </Slate>
       </OrphanNodesContext.Provider>
     </div>
